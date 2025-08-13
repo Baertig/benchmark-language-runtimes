@@ -4,6 +4,7 @@ TARGET ?= wasm32-unknown-unknown
 
 LINK_FLAGS := -z,stack-size=4096 \
 		--export=main \
+		--allow-undefined \
 		--export=__heap_base \
 		--export=__data_end \
 		--strip-all \
@@ -37,7 +38,8 @@ BUILTINS := $(firstword $(wildcard \
 # wasm-ld 8 and 11 do not need --initial-memory=64kB
 GLOBAL_SCALE_FACTOR ?= 1
 
-BENCHMARK ?= mont64.c
+# BENCHMARK ?= mont64.c
+BENCHMARK ?= tarfind.c
 
 COMPILE_FLAGS := -Wall \
 		-Os \
@@ -68,4 +70,5 @@ COMPILE_FLAGS := -Wall \
 %.wat: %.wasm Makefile
 	wasm2wat -o $@ $<
 
-main.wasm: COMPILE_FLAGS += -include $(BENCHMARK)
+main.wasm: $(BENCHMARK) beebsc.c
+main.wasm: COMPILE_FLAGS += -include $(BENCHMARK) -include beebsc.c

@@ -14,10 +14,10 @@
    routines are here, just ones that cause a lot of unecessary load, or where
    there is variation between platforms and architectures. */
 
-#include <stddef.h>
+// #include <stddef.h>
 #include <stdint.h>
-#include <string.h>
-#include <assert.h>
+// #include <string.h>
+// #include <assert.h>
 #include "beebsc.h"
 
 /* Seed for the random number generator */
