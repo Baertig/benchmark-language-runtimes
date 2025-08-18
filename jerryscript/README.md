@@ -1,0 +1,2 @@
+In order for the `print_jerry_error` to work the compiler flag `-DJERRY_ERROR_MESSAGES=ON` has to be set. 
+As of now I think this is only possible by altering the src Makefile: `RIOT/pkg/jerryscript/Makefile`, and adding it to the `cmake` command.

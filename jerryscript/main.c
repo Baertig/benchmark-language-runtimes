@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include "jerryscript.h"
+#include "jerryscript-ext/handler.h"
+
+/* include header generated from main.js */
+#include "blob/tarfind.js.h"
+
+void print_jerry_error(jerry_value_t error_value, const char* error_context)
+{
+    /* Get error details */
+    jerry_value_t error_obj = jerry_get_value_from_error(error_value, false);
+    jerry_value_t error_str = jerry_value_to_string(error_obj);
+    
+    /* Get the error message as a string */
+    jerry_size_t error_str_size = jerry_get_string_size(error_str);
+    jerry_char_t *error_buffer = malloc(error_str_size + 1);
+    if (error_buffer) {
+        jerry_string_to_char_buffer(error_str, error_buffer, error_str_size);
+        error_buffer[error_str_size] = '\0';
+        printf("%s: %s\n", error_context, error_buffer);
+        free(error_buffer);
+    } else {
+        printf("%s: (could not allocate memory for error message)\n", error_context);
+    }
+    
+    /* Check if it's a specific error type */
+    jerry_error_t error_type = jerry_get_error_type(error_value);
+    switch (error_type) {
+        case JERRY_ERROR_COMMON:
+            printf("Error type: Common/Generic error\n");
+            break;
+        case JERRY_ERROR_EVAL:
+            printf("Error type: EvalError\n");
+            break;
+        case JERRY_ERROR_RANGE:
+            printf("Error type: RangeError\n");
+            break;
+        case JERRY_ERROR_REFERENCE:
+            printf("Error type: ReferenceError\n");
+            break;
+        case JERRY_ERROR_SYNTAX:
+            printf("Error type: SyntaxError\n");
+            break;
+        case JERRY_ERROR_TYPE:
+            printf("Error type: TypeError\n");
+            break;
+        case JERRY_ERROR_URI:
+            printf("Error type: URIError\n");
+            break;
+        default:
+            printf("Error type: Unknown (%d)\n", error_type);
+            break;
+    }
+    
+    jerry_release_value(error_str);
+    jerry_release_value(error_obj);
+}
+
+int js_run(const jerry_char_t *script, size_t script_size)
+{
+
+    jerry_value_t parsed_code, ret_value;
+    int res = 0;
+
+    /* Initialize engine, no flags, default configuration */
+
+    jerry_init(JERRY_INIT_EMPTY);
+
+    /* Register the print function in the global object. */
+
+    jerryx_handler_register_global((const jerry_char_t *) "print",
+                                   jerryx_handler_print);
+
+    /* Setup Global scope code */
+
+    parsed_code = jerry_parse(NULL, 0, script, script_size, JERRY_PARSE_NO_OPTS);
+
+    if (!jerry_value_is_error(parsed_code)) {
+        /* Execute the parsed source code in the Global scope */
+        puts("Finished parsing, beginning execution...");
+        ret_value = jerry_run(parsed_code);
+        if (jerry_value_is_error(ret_value)) {
+            printf("js_run(): Script execution error!\n");
+            print_jerry_error(ret_value, "Error message");
+            res = -1;
+        }
+        jerry_release_value(ret_value);
+    } else {
+        printf("Parse error occurred!\n");
+        print_jerry_error(parsed_code, "Parse error message");
+        res = -1;
+    }
+
+    jerry_release_value(parsed_code);
+
+    /* Cleanup engine */
+    jerry_cleanup();
+
+    return res;
+}
+
+int main(void)
+{
+    printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
+    printf("This board features a(n) %s CPU.\n", RIOT_CPU);
+
+    printf("Executing main.js:\n");
+
+    js_run(tarfind_js, tarfind_js_len);
+
+    return 0;
+}
