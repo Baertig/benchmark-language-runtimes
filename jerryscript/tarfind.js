@@ -83,12 +83,9 @@ function benchmark_body(lsf, gsf) {
   return found === N_SEARCHES;
 }
 
-function warm_caches(heat) {
-  benchmark_body(1, heat);
-}
 function benchmark() {
   return benchmark_body(LOCAL_SCALE_FACTOR, GLOBAL_SCALE_FACTOR);
 }
 
-var success = benchmark();
-print("success=", success);
+//jerryscript automatically returns the value of the last expression
+benchmark();

@@ -23,6 +23,8 @@ export JERRY_STACK = 512 # KiB
 # Add the package for Jerryscript
 USEPKG += jerryscript
 
+# Include ztimer for time measurements
+USEMODULE += ztimer_usec
 # generate .js.h header files of .js files
 BLOBS += $(wildcard *.js)
 

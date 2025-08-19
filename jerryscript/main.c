@@ -4,7 +4,13 @@
 
 #include "jerryscript.h"
 #include "jerryscript-ext/handler.h"
+#include "ztimer.h"
 
+#ifndef BENCH_ITERATIONS
+#define BENCH_ITERATIONS 5
+#endif
+
+#define BOOL_TO_STR(x) ((x) ? "True" : "False")
 /* include header generated from main.js */
 #include "blob/tarfind.js.h"
 
@@ -67,6 +73,7 @@ int js_run(const jerry_char_t *script, size_t script_size)
 
     /* Initialize engine, no flags, default configuration */
 
+    uint32_t init_runtime_begin = ztimer_now(ZTIMER_USEC);
     jerry_init(JERRY_INIT_EMPTY);
 
     /* Register the print function in the global object. */
@@ -74,19 +81,40 @@ int js_run(const jerry_char_t *script, size_t script_size)
     jerryx_handler_register_global((const jerry_char_t *) "print",
                                    jerryx_handler_print);
 
+    uint32_t init_runtime_end = ztimer_now(ZTIMER_USEC);
+    printf("%d;", init_runtime_end - init_runtime_begin);
+
+
     /* Setup Global scope code */
 
+    uint32_t load_program_begin = ztimer_now(ZTIMER_USEC);
     parsed_code = jerry_parse(NULL, 0, script, script_size, JERRY_PARSE_NO_OPTS);
+    uint32_t load_program_end = ztimer_now(ZTIMER_USEC);
+    printf("%d;", load_program_end - load_program_begin);
 
     if (!jerry_value_is_error(parsed_code)) {
         /* Execute the parsed source code in the Global scope */
-        puts("Finished parsing, beginning execution...");
+
+        uint32_t execution_time_begin = ztimer_now(ZTIMER_USEC);
+
         ret_value = jerry_run(parsed_code);
+
+        uint32_t execution_time_end = ztimer_now(ZTIMER_USEC);
+        printf("%d;", execution_time_end - execution_time_begin);
+
         if (jerry_value_is_error(ret_value)) {
             printf("js_run(): Script execution error!\n");
             print_jerry_error(ret_value, "Error message");
             res = -1;
         }
+
+        if (!jerry_value_is_boolean(ret_value)) {
+            printf("Error: unexpected return value of jerryscript");
+        } else {
+            bool correct = jerry_get_boolean_value(ret_value);
+            printf("%s\n", BOOL_TO_STR(correct));
+        }
+
         jerry_release_value(ret_value);
     } else {
         printf("Parse error occurred!\n");
@@ -104,12 +132,16 @@ int js_run(const jerry_char_t *script, size_t script_size)
 
 int main(void)
 {
-    printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
-    printf("This board features a(n) %s CPU.\n", RIOT_CPU);
 
-    printf("Executing main.js:\n");
+    printf("=== Benchmark Begins ===\n");
+    printf("iteration;init_runtime_us;load_program_us;execution_time_us;correct\n");
 
-    js_run(tarfind_js, tarfind_js_len);
+    for (int i=0; i < BENCH_ITERATIONS; i++) {
+        printf("%d;", i);
+        js_run(tarfind_js, tarfind_js_len);
+    }
+
+    printf("=== Benchmark End ===\n");
 
     return 0;
 }
