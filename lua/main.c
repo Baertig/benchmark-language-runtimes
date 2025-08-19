@@ -21,8 +21,15 @@
 #include "lauxlib.h"
 #include "lualib.h"
 #include "lua_run.h"
+#include "ztimer.h"
 
 #include "blob/tarfind.lua.h"
+
+#ifndef BENCH_ITERATIONS
+#define BENCH_ITERATIONS 5
+#endif
+
+#define BOOL_TO_STR(x) ((x) ? "True" : "False")
 
 #define LUA_MEM_SIZE (350 * 1024)
 
@@ -53,6 +60,8 @@ static const char* lua_status_name(int code) {
 
 int lua_run_script(const uint8_t *buffer, size_t buffer_len)
 {
+
+    uint32_t init_runtime_begin = ztimer_now(ZTIMER_USEC);
     lua_State *L = lua_riot_newstate(lua_mem, sizeof(lua_mem), NULL);
 
     if (L == NULL) {
@@ -65,10 +74,17 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
     lua_riot_openlibs(L, LUAR_LOAD_STRING);
     lua_riot_openlibs(L, LUAR_LOAD_TABLE);
 
+    uint32_t init_runtime_end = ztimer_now(ZTIMER_USEC);
+    printf("%d;", init_runtime_end - init_runtime_begin);
+
     lua_pushcfunction(L, msghandler);
     int errfunc = lua_gettop(L);
 
+    uint32_t load_program_begin = ztimer_now(ZTIMER_USEC);
     int status = luaL_loadbuffer(L, (const char *)buffer, buffer_len, "lua input script");
+    uint32_t load_program_end = ztimer_now(ZTIMER_USEC);
+    printf("%d;", load_program_end - load_program_begin);
+
     if (status != LUA_OK) {
         const char *msg = lua_tostring(L, -1);
         printf("Lua load %s error (%d): %s\n",
@@ -77,11 +93,19 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
         lua_pop(L, 1);           // pop error message
         lua_riot_close(L);
         return EINTR;
-    } else {
-        puts("Loaded lua script successfully!");
-    }
+    } 
 
-    status = lua_pcall(L, 0, 0, errfunc);
+
+    uint32_t execution_time_begin = ztimer_now(ZTIMER_USEC);
+    // lua_pcall(L, nargs, nresults, errfunc)
+    // L: Lua state
+    // nargs: number of arguments passed to the function (0 - no arguments)
+    // nresults: number of return values expected (1 - expect 1 return value)
+    // errfunc: stack index of error handler function (msghandler)
+    status = lua_pcall(L, 0, 1, errfunc);
+    uint32_t execution_time_end = ztimer_now(ZTIMER_USEC);
+    printf("%d;", execution_time_end - execution_time_begin);
+
     if (status != LUA_OK) {
         const char *msg = lua_tostring(L, -1);
         printf("Lua %s runtime error (%d): %s\n",
@@ -92,6 +116,16 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
         return EINTR;
     }
 
+    // Get the return value from the script
+    bool correct = false;
+    if (lua_isboolean(L, -1)) {
+        correct = lua_toboolean(L, -1);
+    } else {
+        printf("Error: unexpected return value type from Lua script\n");
+    }
+    
+    printf("%s\n", BOOL_TO_STR(correct));
+
     lua_pop(L, 1);               // pop msghandler
     lua_riot_close(L);
     return 0;
@@ -99,9 +133,15 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
 
 int main(void)
 {
-    puts("Lua RIOT build");
-    lua_run_script(tarfind_lua, tarfind_lua_len);
-    puts("Lua interpreter exited");
+
+    printf("=== Benchmark Begins ===\n");
+    printf("iteration;init_runtime_us;load_program_us;execution_time_us;correct\n");
+
+    for (int i=0; i < BENCH_ITERATIONS; i++) {
+        printf("%d;", i);
+        lua_run_script(tarfind_lua, tarfind_lua_len);
+    }
+    printf("=== Benchmark End ===\n");
 
     return 0;
 }

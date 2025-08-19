@@ -22,6 +22,8 @@ endif
 
 USEPKG += lua
 
+USEMODULE += ztimer_usec
+
 # generate .lua.h header files of .lua files
 BLOBS += $(wildcard *.lua)
 

@@ -81,14 +81,9 @@ local function benchmark_body(lsf, gsf)
   return (found == N_SEARCHES) 
 end
 
-local function warm_caches(heat)
-  benchmark_body(1, heat)
-end
 
 local function benchmark()
   return benchmark_body(LOCAL_SCALE_FACTOR, GLOBAL_SCALE_FACTOR)
 end
 
--- Run as a script
-local ok = benchmark()
-print("success=", ok)
+return benchmark()
