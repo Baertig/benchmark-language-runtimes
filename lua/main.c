@@ -23,7 +23,18 @@
 #include "lua_run.h"
 #include "ztimer.h"
 
-#include "blob/tarfind.lua.h"
+/* Macro to create header file path from benchmark name */
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define BENCHMARK_HEADER "blob/" TOSTRING(BENCHMARK) ".h"
+
+/* Include header generated from the benchmark file */
+#include BENCHMARK_HEADER
+
+/* Create variable names from benchmark name */
+#define CONCAT(a, b) a ## b
+#define BENCHMARK_DATA CONCAT(BENCHMARK, _data)
+#define BENCHMARK_LEN CONCAT(BENCHMARK, _len)
 
 #ifndef BENCH_ITERATIONS
 #define BENCH_ITERATIONS 5
@@ -139,7 +150,7 @@ int main(void)
 
     for (int i=0; i < BENCH_ITERATIONS; i++) {
         printf("%d;", i);
-        lua_run_script(tarfind_lua, tarfind_lua_len);
+        lua_run_script(BENCHMARK_DATA, BENCHMARK_LEN);
     }
     printf("=== Benchmark End ===\n");
 

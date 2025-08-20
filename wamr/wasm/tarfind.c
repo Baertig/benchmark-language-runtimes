@@ -115,10 +115,3 @@ benchmark_body(unsigned int lsf, unsigned int gsf)
 
   return found == N_SEARCHES;
 }
-
-
-int
-verify_benchmark (int r)
-{
-  return r == 1;
-}

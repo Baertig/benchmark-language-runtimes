@@ -10,6 +10,13 @@ RIOTBASE ?= $(CURDIR)/../RIOT
 USEPKG += wamr
 USEMODULE += ztimer_usec
 
+# Select which benchmark to compile
+BENCHMARK ?= tarfind
+BENCHMARK_FILE = $(BENCHMARK).c
+
+# Pass the benchmark name to the preprocessor and wasm build
+CFLAGS += -DBENCHMARK=$(BENCHMARK_FILE)
+
 ifeq (,$(filter native native32 native64,$(BOARD)))
 CFLAGS += -DTHREAD_STACKSIZE_MAIN='(6 * 1024)'
 endif
@@ -27,7 +34,7 @@ QUIET ?= 1
 all: main.wasm
 
 main.wasm: wasm/main.c wasm/Makefile
-	make -C wasm main.wasm
+	make -C wasm BENCHMARK=$(BENCHMARK_FILE) main.wasm
 	mv wasm/main.wasm .
 
 include $(RIOTBASE)/Makefile.include

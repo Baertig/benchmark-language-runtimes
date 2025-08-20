@@ -11,8 +11,19 @@
 #endif
 
 #define BOOL_TO_STR(x) ((x) ? "True" : "False")
-/* include header generated from main.js */
-#include "blob/tarfind.js.h"
+
+/* Macro to create header file path from benchmark name */
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define BENCHMARK_HEADER "blob/" TOSTRING(BENCHMARK) ".h"
+
+/* Include header generated from the benchmark file */
+#include BENCHMARK_HEADER
+
+/* Create variable names from benchmark name */
+#define CONCAT(a, b) a ## b
+#define BENCHMARK_DATA CONCAT(BENCHMARK, _data)
+#define BENCHMARK_LEN CONCAT(BENCHMARK, _len)
 
 void print_jerry_error(jerry_value_t error_value, const char* error_context)
 {
@@ -138,7 +149,7 @@ int main(void)
 
     for (int i=0; i < BENCH_ITERATIONS; i++) {
         printf("%d;", i);
-        js_run(tarfind_js, tarfind_js_len);
+        js_run(BENCHMARK_DATA, BENCHMARK_LEN);
     }
 
     printf("=== Benchmark End ===\n");

@@ -40,29 +40,20 @@ typedef struct {
 static char _Alignas(_Alignof(tar_header_t)) heap[HEAP_SIZE]; 
 static int benchmark_body(unsigned int lsf, unsigned int gsf);
 
-void
-warm_caches (int  heat)
-{
-  benchmark_body (1, heat);
-  return;
-}
 
 int
 benchmark (void)
 {
   return benchmark_body (LOCAL_SCALE_FACTOR, GLOBAL_SCALE_FACTOR);
 }
-void
-initialise_benchmark (void)
-{
-}
+
 
 static int __attribute__ ((noinline))
 benchmark_body(unsigned int lsf, unsigned int gsf)
 {
   int i, p;
   tar_header_t * hdr;
-  int found;
+  int found = 0;
 
   for (unsigned int lsf_cnt = 0; lsf_cnt < lsf; lsf_cnt++)
     for (unsigned int gsf_cnt = 0; gsf_cnt < gsf; gsf_cnt++)
@@ -110,11 +101,4 @@ benchmark_body(unsigned int lsf, unsigned int gsf)
       }
 
   return found == N_SEARCHES;
-}
-
-
-int
-verify_benchmark (int r)
-{
-  return r == 1;
 }

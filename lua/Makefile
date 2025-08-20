@@ -25,6 +25,12 @@ USEPKG += lua
 USEMODULE += ztimer_usec
 
 # generate .lua.h header files of .lua files
-BLOBS += $(wildcard *.lua)
+BENCHMARK ?= tarfind
+BENCHMARK_FILE = $(BENCHMARK).lua
+
+# Pass the benchmark name to the preprocessor
+CFLAGS += -DBENCHMARK=$(BENCHMARK_FILE)
+
+BLOBS += BENCHMARK
 
 include $(RIOTBASE)/Makefile.include

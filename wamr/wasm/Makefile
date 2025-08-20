@@ -38,9 +38,6 @@ BUILTINS := $(firstword $(wildcard \
 # wasm-ld 8 and 11 do not need --initial-memory=64kB
 GLOBAL_SCALE_FACTOR ?= 1
 
-# BENCHMARK ?= mont64.c
-BENCHMARK ?= tarfind.c
-
 COMPILE_FLAGS := -Wall \
 		-Os \
 		-flto \
@@ -70,5 +67,5 @@ COMPILE_FLAGS := -Wall \
 %.wat: %.wasm Makefile
 	wasm2wat -o $@ $<
 
-main.wasm: $(BENCHMARK) beebsc.c
+main.wasm: $(BENCHMARK) beebsc.c main.c
 main.wasm: COMPILE_FLAGS += -include $(BENCHMARK) -include beebsc.c

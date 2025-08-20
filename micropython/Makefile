@@ -12,7 +12,13 @@ USEPKG += micropython
 USEMODULE += ztimer_usec
 
 # include boot.py as header
-BLOBS += tarfind.py
+BENCHMARK ?= tarfind
+BENCHMARK_FILE = $(BENCHMARK).py
+
+# Pass the benchmark name to the preprocessor
+CFLAGS += -DBENCHMARK=$(BENCHMARK_FILE)
+
+BLOBS += BENCHMARK
 
 # configure MicroPython's heap size
 MP_RIOT_HEAPSIZE ?= $(shell echo $$((32 * 1024)))

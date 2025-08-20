@@ -26,6 +26,12 @@ USEPKG += jerryscript
 # Include ztimer for time measurements
 USEMODULE += ztimer_usec
 # generate .js.h header files of .js files
-BLOBS += $(wildcard *.js)
+BENCHMARK ?= tarfind
+BENCHMARK_FILE = $(BENCHMARK).js
+
+# Pass the benchmark name to the preprocessor
+CFLAGS += -DBENCHMARK=$(BENCHMARK_FILE)
+
+BLOBS += BENCHMARK
 
 include $(RIOTBASE)/Makefile.include

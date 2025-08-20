@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "ztimer.h"
-/*include the benchmark main*/
+
 #include "blob/main.wasm.h"
 
 bool iwasm_runtime_init(void);
@@ -44,8 +44,8 @@ int main(void)
             printf("Error when initializing iwasm runtime");
         }
 
-        int incorrect = wamr_run_cp(main_wasm, main_wasm_len, 0, NULL);
-        printf("%s\n", BOOL_TO_STR(!incorrect));
+        bool correct = wamr_run_cp(main_wasm, main_wasm_len, 0, NULL);
+        printf("%s\n", BOOL_TO_STR(correct));
 
         iwasm_runtime_destroy();
     }

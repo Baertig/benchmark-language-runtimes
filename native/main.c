@@ -24,8 +24,7 @@
 
 int main (void)
 {
-  volatile int result;
-  int correct;
+  bool correct;
 
   printf("=== Benchmark Begins ===\n");
   printf("iteration;init_runtime_us;load_program_us;execution_time_us;correct\n");
@@ -34,8 +33,7 @@ int main (void)
 
     uint32_t execution_begin = ztimer_now(ZTIMER_USEC);
 
-    result = benchmark ();
-    correct = verify_benchmark (result);
+    correct = benchmark();
 
     uint32_t execution_end = ztimer_now(ZTIMER_USEC);
 

@@ -14,13 +14,24 @@
 #include "lib/utils/pyexec.h"
 #include "ztimer.h"
 
+/* Macro to create header file path from benchmark name */
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define BENCHMARK_HEADER "blob/" TOSTRING(BENCHMARK) ".h"
+
+/* Include header generated from the benchmark file */
+#include BENCHMARK_HEADER
+
+/* Create variable names from benchmark name */
+#define CONCAT(a, b) a ## b
+#define BENCHMARK_DATA CONCAT(BENCHMARK, _data)
+#define BENCHMARK_LEN CONCAT(BENCHMARK, _len)
+
 #ifndef BENCH_ITERATIONS
 #define BENCH_ITERATIONS 5
 #endif
 
 #define BOOL_TO_STR(x) ((x) ? "True" : "False")
-
-#include "blob/tarfind.py.h"
 
 static char mp_heap[MP_RIOT_HEAPSIZE];
 
@@ -93,7 +104,7 @@ int main(void)
         uint32_t init_runtime_end = ztimer_now(ZTIMER_USEC);
         printf("%d;", init_runtime_end - init_runtime_begin);
 
-        mp_exec((const char *)tarfind_py, tarfind_py_len);
+        mp_exec((const char *)BENCHMARK_DATA, BENCHMARK_LEN);
     }
 
     printf("=== Benchmark End ===\n");
