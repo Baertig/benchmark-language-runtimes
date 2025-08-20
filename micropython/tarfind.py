@@ -69,23 +69,8 @@ def benchmark_body(lsf, gsf):
                         found += 1
                         break
 
-    return 1 if found == N_SEARCHES else 0
-
-
-def warm_caches(heat):
-    benchmark_body(1, heat)
+    return found == N_SEARCHES
 
 
 def benchmark():
     return benchmark_body(LOCAL_SCALE_FACTOR, GLOBAL_SCALE_FACTOR)
-
-
-def verify_benchmark(r):
-    return r == 1
-
-
-if __name__ == "__main__":
-    r = benchmark()
-    ok = verify_benchmark(r)
-    # Print result (1 or 0) to mirror C returning int, plus verification status
-    print("success=", ok)

@@ -9,6 +9,7 @@ RIOTBASE ?= $(CURDIR)/../RIOT
 
 # select MicroPython package
 USEPKG += micropython
+USEMODULE += ztimer_usec
 
 # include boot.py as header
 BLOBS += tarfind.py
@@ -22,19 +23,5 @@ CFLAGS += '-DTHREAD_STACKSIZE_MAIN=THREAD_STACKSIZE_DEFAULT*4'
 # use miniterm (instead of the default pyterm) in order to support control
 # characters (CTRL-D ...)
 RIOT_TERMINAL ?= miniterm
-
-# enable modmachine support for peripherals if available
-FEATURES_OPTIONAL += periph_adc
-FEATURES_OPTIONAL += periph_spi
-
-# For now `examples/%/tests" still rely on the test applicaton being reset after
-# a terminal is opened to synchronize.
-TESTRUNNER_RESET_AFTER_TERM ?= 1
-
-# failing on native with floating point exception (#15870)
-TEST_ON_CI_BLACKLIST += native32 native64
-
-# avoid running Kconfig by defaultboot
-SHOULD_RUN_KCONFIG ?=
 
 include $(RIOTBASE)/Makefile.include
