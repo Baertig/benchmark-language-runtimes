@@ -8,6 +8,7 @@ BOARD ?= native
 RIOTBASE ?= $(CURDIR)/../RIOT
 
 USEPKG += wamr
+USEMODULE += ztimer_usec
 
 ifeq (,$(filter native native32 native64,$(BOARD)))
 CFLAGS += -DTHREAD_STACKSIZE_MAIN='(6 * 1024)'
