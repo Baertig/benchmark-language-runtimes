@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "ztimer.h"
+#include <stdbool.h>
 
 #ifndef BENCH_ITERATIONS
 #define BENCH_ITERATIONS 5
@@ -26,9 +27,10 @@ int main (void)
 {
   bool correct;
 
+  ztimer_sleep(ZTIMER_USEC, 2000000); // sleep for 2 seconds, so that a uart connection can be established
+
   printf("=== Benchmark Begins ===\n");
   printf("iteration;init_runtime_us;load_program_us;execution_time_us;correct\n");
-  // start_trigger ();
   for (int i=0; i < BENCH_ITERATIONS; i++) {
 
     uint32_t execution_begin = ztimer_now(ZTIMER_USEC);
