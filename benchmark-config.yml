@@ -1,0 +1,11 @@
+benchmarks:
+  - name: tarfind
+    filename: tarfind # (optional, default value is name) 
+    global_scale_factor: 5 
+    iterations: 5
+    supported_environments:
+      - name: jerryscript
+      - name: lua
+      - name: micropython
+      - name: native
+      - name: wamr
