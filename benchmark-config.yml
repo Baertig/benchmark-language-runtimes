@@ -3,9 +3,25 @@ benchmarks:
     filename: tarfind # (optional, default value is name) 
     global_scale_factor: 5 
     iterations: 5
-    supported_environments:
-      - name: jerryscript
-      - name: lua
-      - name: micropython
-      - name: native
-      - name: wamr
+    boards:
+    - board_name: native
+      supported_environments:
+        - name: jerryscript
+        - name: lua
+        - name: micropython
+        - name: native
+        - name: wamr
+    - board_name: adafruit-feather-nrf52840-sense 
+      supported_environments:
+        - name: jerryscript
+        # - name: lua --> not enough memory
+        - name: micropython
+        - name: native
+        - name: wamr
+    - board_name: esp32-wroom-32
+      supported_environments:
+        - name: jerryscript
+        - name: lua
+        - name: micropython
+        - name: native
+        - name: wamr

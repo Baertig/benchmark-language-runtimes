@@ -303,21 +303,43 @@ class BenchmarkRunner:
     def run_benchmarks(self) -> None:
         """Run all benchmarks defined in the configuration."""
         for benchmark in self.config.benchmarks:
-            if 'supported_environments' not in benchmark:
+            # New schema: benchmarks[].boards[].{board_name, supported_environments[]}
+            boards = benchmark.get('boards', [])
+            if not boards:
                 console.print(
-                    f"Warning: No supported environments for benchmark '{benchmark['name']}'. Skipping.")
+                    f"Warning: No boards listed for benchmark '{benchmark.get('name','<unnamed>')}'. Skipping.")
                 continue
 
-            console.print(
-                f"\n=== Processing benchmark: {benchmark['name']} ===")
+            # Find matching board configuration (case-insensitive match)
+            board_cfg = None
+            for b in boards:
+                bname = str(b.get('board_name', '')).strip()
+                if bname.lower() == self.board.lower():
+                    board_cfg = b
+                    break
 
-            for env_config in benchmark['supported_environments']:
-                env_name = env_config['name']
-                success = self._run_benchmark_for_environment(
-                    benchmark, env_name)
+            if not board_cfg:
+                console.print(
+                    f"Info: Board '{self.board}' not configured for benchmark '{benchmark.get('name','<unnamed>')}'. Skipping.")
+                continue
+
+            supported_envs = board_cfg.get('supported_environments', [])
+            if not supported_envs:
+                console.print(
+                    f"Warning: No supported environments for board '{self.board}' in benchmark '{benchmark.get('name','<unnamed>')}'. Skipping.")
+                continue
+
+            console.print(f"\n=== Processing benchmark: {benchmark.get('name','<unnamed>')} (board: {self.board}) ===")
+
+            for env_config in supported_envs:
+                env_name = env_config.get('name')
+                if not env_name:
+                    console.print("Warning: Encountered environment entry without a name. Skipping.")
+                    continue
+                success = self._run_benchmark_for_environment(benchmark, env_name)
                 if not success:
                     console.print(
-                        f"Failed to run benchmark '{benchmark['name']}' in environment '{env_name}'")
+                        f"Failed to run benchmark '{benchmark.get('name','<unnamed>')}' in environment '{env_name}'")
 
     def write_results_to_csv(self, output_file: str) -> None:
         """Write collected results to a CSV file.
