@@ -5,6 +5,7 @@
 #include "jerryscript.h"
 #include "jerryscript-ext/handler.h"
 #include "ztimer.h"
+#include "periph/pm.h"
 
 #ifndef BENCH_ITERATIONS
 #define BENCH_ITERATIONS 5
@@ -12,18 +13,8 @@
 
 #define BOOL_TO_STR(x) ((x) ? "True" : "False")
 
-/* Macro to create header file path from benchmark name */
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
-#define BENCHMARK_HEADER "blob/" TOSTRING(BENCHMARK) ".h"
-
 /* Include header generated from the benchmark file */
-#include BENCHMARK_HEADER
-
-/* Create variable names from benchmark name */
-#define CONCAT(a, b) a ## b
-#define BENCHMARK_DATA CONCAT(BENCHMARK, _data)
-#define BENCHMARK_LEN CONCAT(BENCHMARK, _len)
+#include "blob/benchmark.js.h"
 
 void print_jerry_error(jerry_value_t error_value, const char* error_context)
 {
@@ -93,7 +84,7 @@ int js_run(const jerry_char_t *script, size_t script_size)
                                    jerryx_handler_print);
 
     uint32_t init_runtime_end = ztimer_now(ZTIMER_USEC);
-    printf("%d;", init_runtime_end - init_runtime_begin);
+    printf("%d;", (int) (init_runtime_end - init_runtime_begin));
 
 
     /* Setup Global scope code */
@@ -101,7 +92,7 @@ int js_run(const jerry_char_t *script, size_t script_size)
     uint32_t load_program_begin = ztimer_now(ZTIMER_USEC);
     parsed_code = jerry_parse(NULL, 0, script, script_size, JERRY_PARSE_NO_OPTS);
     uint32_t load_program_end = ztimer_now(ZTIMER_USEC);
-    printf("%d;", load_program_end - load_program_begin);
+    printf("%d;", (int) (load_program_end - load_program_begin));
 
     if (!jerry_value_is_error(parsed_code)) {
         /* Execute the parsed source code in the Global scope */
@@ -111,7 +102,7 @@ int js_run(const jerry_char_t *script, size_t script_size)
         ret_value = jerry_run(parsed_code);
 
         uint32_t execution_time_end = ztimer_now(ZTIMER_USEC);
-        printf("%d;", execution_time_end - execution_time_begin);
+        printf("%d;", (int) (execution_time_end - execution_time_begin));
 
         if (jerry_value_is_error(ret_value)) {
             printf("js_run(): Script execution error!\n");
@@ -149,10 +140,13 @@ int main(void)
 
     for (int i=0; i < BENCH_ITERATIONS; i++) {
         printf("%d;", i);
-        js_run(BENCHMARK_DATA, BENCHMARK_LEN);
+        js_run(benchmark_js, benchmark_js_len);
     }
 
     printf("=== Benchmark End ===\n");
+
+    /* Power off to prevent hanging */
+    pm_off();
 
     return 0;
 }

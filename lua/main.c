@@ -22,19 +22,10 @@
 #include "lualib.h"
 #include "lua_run.h"
 #include "ztimer.h"
-
-/* Macro to create header file path from benchmark name */
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
-#define BENCHMARK_HEADER "blob/" TOSTRING(BENCHMARK) ".h"
+#include "periph/pm.h"
 
 /* Include header generated from the benchmark file */
-#include BENCHMARK_HEADER
-
-/* Create variable names from benchmark name */
-#define CONCAT(a, b) a ## b
-#define BENCHMARK_DATA CONCAT(BENCHMARK, _data)
-#define BENCHMARK_LEN CONCAT(BENCHMARK, _len)
+#include "blob/benchmark.lua.h"
 
 #ifndef BENCH_ITERATIONS
 #define BENCH_ITERATIONS 5
@@ -150,9 +141,12 @@ int main(void)
 
     for (int i=0; i < BENCH_ITERATIONS; i++) {
         printf("%d;", i);
-        lua_run_script(BENCHMARK_DATA, BENCHMARK_LEN);
+        lua_run_script(benchmark_lua, benchmark_lua_len);
     }
     printf("=== Benchmark End ===\n");
+
+    /* Power off to prevent hanging */
+    pm_off();
 
     return 0;
 }

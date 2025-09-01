@@ -31,6 +31,8 @@ DEVELHELP ?= 1
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
+# RIOT_TERMINAL ?= miniterm
+#
 all: main.wasm
 
 main.wasm: wasm/main.c wasm/Makefile

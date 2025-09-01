@@ -17,8 +17,8 @@ ifeq (,$(filter native native32 native64,$(BOARD)))
 CFLAGS += -DTHREAD_STACKSIZE_MAIN=100092
 endif
 
-export JERRY_HEAP = 1000 # KiB
-export JERRY_STACK = 512 # KiB
+export JERRY_HEAP = 100 # KiB
+export JERRY_STACK = 50 # KiB
 
 # Add the package for Jerryscript
 USEPKG += jerryscript
@@ -29,9 +29,13 @@ USEMODULE += ztimer_usec
 BENCHMARK ?= tarfind
 BENCHMARK_FILE = $(BENCHMARK).js
 
-# Pass the benchmark name to the preprocessor
-CFLAGS += -DBENCHMARK=$(BENCHMARK_FILE)
+BLOBS += benchmark.js
 
-BLOBS += BENCHMARK
+# RIOT_TERMINAL ?= miniterm
+
+all: benchmark.js
+
+benchmark.js: 
+	cp $(BENCHMARK_FILE) benchmark.js
 
 include $(RIOTBASE)/Makefile.include

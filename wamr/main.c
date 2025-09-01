@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "ztimer.h"
+#include "periph/pm.h"
 
 #include "blob/main.wasm.h"
 
@@ -39,7 +40,7 @@ int main(void)
         bool init_successful = iwasm_runtime_init();
         uint32_t init_runtime_end = ztimer_now(ZTIMER_USEC);
 
-        printf("%d;", init_runtime_end - init_runtime_begin);
+        printf("%d;", (int) (init_runtime_end - init_runtime_begin));
         if(!init_successful) {
             printf("Error when initializing iwasm runtime");
         }
@@ -51,5 +52,8 @@ int main(void)
     }
 
     printf("=== Benchmark End ===\n");
+
+    /* Power off to prevent hanging */
+    pm_off();
 }
 

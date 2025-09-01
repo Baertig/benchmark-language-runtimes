@@ -67,12 +67,12 @@ int iwasm_bytecode_exec_main(uint8_t *bytecode, size_t bytecode_len, int argc, c
         }
     }
     uint32_t load_program_end = ztimer_now(ZTIMER_USEC);
-    printf("%d;", load_program_end - load_program_begin);
+    printf("%d;", (int) (load_program_end - load_program_begin));
 
     uint32_t execution_begin = ztimer_now(ZTIMER_USEC);
     ret = iwasm_module_exec_main(wasm_module, argc, argv);
     uint32_t execution_end = ztimer_now(ZTIMER_USEC);
-    printf("%d;", execution_end - execution_begin);
+    printf("%d;", (int) (execution_end - execution_begin));
 
     /* unload WASM module */
     wasm_runtime_unload(wasm_module);

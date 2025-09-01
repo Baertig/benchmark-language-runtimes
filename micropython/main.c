@@ -13,19 +13,9 @@
 
 #include "lib/utils/pyexec.h"
 #include "ztimer.h"
+#include "periph/pm.h"
 
-/* Macro to create header file path from benchmark name */
-#define STRINGIFY(x) #x
-#define TOSTRING(x) STRINGIFY(x)
-#define BENCHMARK_HEADER "blob/" TOSTRING(BENCHMARK) ".h"
-
-/* Include header generated from the benchmark file */
-#include BENCHMARK_HEADER
-
-/* Create variable names from benchmark name */
-#define CONCAT(a, b) a ## b
-#define BENCHMARK_DATA CONCAT(BENCHMARK, _data)
-#define BENCHMARK_LEN CONCAT(BENCHMARK, _len)
+#include "blob/benchmark.py.h"
 
 #ifndef BENCH_ITERATIONS
 #define BENCH_ITERATIONS 5
@@ -53,14 +43,14 @@ void mp_exec(const char *src, size_t len) {
         mp_obj_t module_fun = mp_compile(&parse_tree, source_name, MP_EMIT_OPT_NONE, false);
 
         uint32_t load_program_end = ztimer_now(ZTIMER_USEC);
-        printf("%d;", load_program_end - load_program_begin);
+        printf("%d;", (int) (load_program_end - load_program_begin));
 
         uint32_t execution_begin = ztimer_now(ZTIMER_USEC);
         mp_call_function_0(module_fun);
         mp_obj_t benchmark_function = mp_load_global(qstr_from_str("benchmark"));
         mp_obj_t result = mp_call_function_0(benchmark_function);
         uint32_t execution_end = ztimer_now(ZTIMER_USEC);
-        printf("%d;", execution_end - execution_begin);
+        printf("%d;", (int) (execution_end - execution_begin));
 
         bool correct = false;
         if (result == mp_const_true) {
@@ -102,11 +92,15 @@ int main(void)
         mp_riot_init(mp_heap, sizeof(mp_heap));
 
         uint32_t init_runtime_end = ztimer_now(ZTIMER_USEC);
-        printf("%d;", init_runtime_end - init_runtime_begin);
+        printf("%d;", (int) (init_runtime_end - init_runtime_begin));
 
-        mp_exec((const char *)BENCHMARK_DATA, BENCHMARK_LEN);
+        mp_exec((const char *)benchmark_py, benchmark_py_len);
     }
 
     printf("=== Benchmark End ===\n");
+
+    /* Power off to prevent hanging */
+    pm_off();
+    
     return 0;
 }

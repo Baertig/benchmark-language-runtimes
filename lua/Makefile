@@ -23,14 +23,19 @@ endif
 USEPKG += lua
 
 USEMODULE += ztimer_usec
+RIOT_TERMINAL ?= miniterm
 
 # generate .lua.h header files of .lua files
 BENCHMARK ?= tarfind
 BENCHMARK_FILE = $(BENCHMARK).lua
 
-# Pass the benchmark name to the preprocessor
-CFLAGS += -DBENCHMARK=$(BENCHMARK_FILE)
+all: benchmark.lua
 
-BLOBS += BENCHMARK
+.PHONY: .FORCE
+
+benchmark.lua: .FORCE
+	cp $(BENCHMARK_FILE) benchmark.lua
+
+BLOBS += benchmark.lua
 
 include $(RIOTBASE)/Makefile.include
