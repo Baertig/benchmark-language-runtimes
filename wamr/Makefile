@@ -35,7 +35,9 @@ QUIET ?= 1
 #
 all: main.wasm
 
-main.wasm: wasm/main.c wasm/Makefile
+.PHONY: .FORCE
+
+main.wasm: .FORCE
 	make -C wasm BENCHMARK=$(BENCHMARK_FILE) main.wasm
 	mv wasm/main.wasm .
 

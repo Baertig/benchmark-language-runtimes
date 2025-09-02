@@ -24,7 +24,9 @@ CFLAGS += '-DTHREAD_STACKSIZE_MAIN=THREAD_STACKSIZE_DEFAULT*4'
 
 all: benchmark.py
 
-benchmark.py:
+.PHONY: .FORCE
+
+benchmark.py: .FORCE
 	cp $(BENCHMARK_FILE) benchmark.py
 
 include $(RIOTBASE)/Makefile.include

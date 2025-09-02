@@ -31,11 +31,11 @@ BENCHMARK_FILE = $(BENCHMARK).js
 
 BLOBS += benchmark.js
 
-# RIOT_TERMINAL ?= miniterm
-
 all: benchmark.js
 
-benchmark.js: 
+.PHONY: .FORCE
+
+benchmark.js: .FORCE
 	cp $(BENCHMARK_FILE) benchmark.js
 
 include $(RIOTBASE)/Makefile.include
