@@ -14,7 +14,7 @@ DEVELHELP ?= 1
 
 ifeq (,$(filter native native32 native64,$(BOARD)))
 # Set stack size to something (conservatively) enormous
-CFLAGS += -DTHREAD_STACKSIZE_MAIN=100092
+CFLAGS += -DTHREAD_STACKSIZE_MAIN=9092
 endif
 
 export JERRY_HEAP = 100 # KiB
@@ -39,3 +39,5 @@ benchmark.js:
 	cp $(BENCHMARK_FILE) benchmark.js
 
 include $(RIOTBASE)/Makefile.include
+
+include ../Makefile.include

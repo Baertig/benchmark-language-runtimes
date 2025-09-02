@@ -1,0 +1,3 @@
+cosy-output: $(ELFFILE) $(COSY_TOOL)
+	$(COSY_TOOL) -d --riot-base $(RIOTBASE) $(APPDIR) $(BOARD) $(ELFFILE) $(MAPFILE)
+	cp $(RIOTBASE)/build/pkg/cosy/root/symbols.json ./symbols.json

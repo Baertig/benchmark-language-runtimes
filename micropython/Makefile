@@ -28,3 +28,5 @@ benchmark.py:
 	cp $(BENCHMARK_FILE) benchmark.py
 
 include $(RIOTBASE)/Makefile.include
+
+include ../Makefile.include

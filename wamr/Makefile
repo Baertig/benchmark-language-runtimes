@@ -40,3 +40,5 @@ main.wasm: wasm/main.c wasm/Makefile
 	mv wasm/main.wasm .
 
 include $(RIOTBASE)/Makefile.include
+
+include ../Makefile.include

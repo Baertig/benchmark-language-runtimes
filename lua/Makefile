@@ -39,3 +39,5 @@ benchmark.lua: .FORCE
 BLOBS += benchmark.lua
 
 include $(RIOTBASE)/Makefile.include
+
+include ../Makefile.include

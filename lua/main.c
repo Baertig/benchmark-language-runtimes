@@ -77,7 +77,7 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
     lua_riot_openlibs(L, LUAR_LOAD_TABLE);
 
     uint32_t init_runtime_end = ztimer_now(ZTIMER_USEC);
-    printf("%d;", init_runtime_end - init_runtime_begin);
+    printf("%d;", (int) init_runtime_end - (int) init_runtime_begin);
 
     lua_pushcfunction(L, msghandler);
     int errfunc = lua_gettop(L);
@@ -85,7 +85,7 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
     uint32_t load_program_begin = ztimer_now(ZTIMER_USEC);
     int status = luaL_loadbuffer(L, (const char *)buffer, buffer_len, "lua input script");
     uint32_t load_program_end = ztimer_now(ZTIMER_USEC);
-    printf("%d;", load_program_end - load_program_begin);
+    printf("%d;", (int) load_program_end - (int) load_program_begin);
 
     if (status != LUA_OK) {
         const char *msg = lua_tostring(L, -1);
@@ -106,7 +106,7 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
     // errfunc: stack index of error handler function (msghandler)
     status = lua_pcall(L, 0, 1, errfunc);
     uint32_t execution_time_end = ztimer_now(ZTIMER_USEC);
-    printf("%d;", execution_time_end - execution_time_begin);
+    printf("%d;", (int) execution_time_end - (int) execution_time_begin);
 
     if (status != LUA_OK) {
         const char *msg = lua_tostring(L, -1);
