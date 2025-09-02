@@ -22,6 +22,6 @@ benchmarks:
       supported_environments:
         - name: jerryscript
         - name: lua
-        - name: micropython
+        # - name: micropython -> micropython does not run on esp32 boards, they are blacklisted
         - name: native
         - name: wamr
