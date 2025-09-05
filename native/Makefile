@@ -15,7 +15,6 @@ BENCHMARK_FILE = $(BENCHMARK).c
 
 # Include the selected benchmark source file
 SRC += benchmarks/$(BENCHMARK_FILE)
-SRC += beebsc.c
 SRC += main.c
 
 # Comment this out to disable code in RIOT that does safety checking

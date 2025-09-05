@@ -67,5 +67,5 @@ COMPILE_FLAGS := -Wall \
 %.wat: %.wasm Makefile
 	wasm2wat -o $@ $<
 
-main.wasm: $(BENCHMARK) beebsc.c main.c
-main.wasm: COMPILE_FLAGS += -include $(BENCHMARK) -include beebsc.c
+main.wasm: $(BENCHMARK) main.c
+main.wasm: COMPILE_FLAGS += -include $(BENCHMARK)

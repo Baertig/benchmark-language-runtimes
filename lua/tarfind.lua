@@ -7,20 +7,11 @@ local ARCHIVE_FILES = 35
 local N_SEARCHES = 5
 local GLOBAL_SCALE_FACTOR = 1
 
-local seed = 0
-
-local function randint()
-  -- Replicate Python logic exactly using Lua 5.3 bitwise ops:
-  -- seed = (seed * 1103515245 + 12345) & (1 << 31); return seed >> 16
-  seed = ((seed * 1103515245 + 12345) & (1 << 31))
-  return seed >> 16
-end
-
 local function gen_random_filename(length)
   -- Random uppercase A-Z string of given length (but using the RNG above)
   local t = {}
   for i = 1, length do
-    t[i] = string.char((randint() % 26) + 65)
+    t[i] = string.char((math.random(0,25)) + 65)
   end
   return table.concat(t)
 end

@@ -11,10 +11,6 @@
 
    SPDX-License-Identifier: GPL-3.0-or-later */
 
-#include <stdbool.h>
-#include "support.h"
-
-
 int __attribute__ ((used))
 main (int argc __attribute__ ((unused)),
       char *argv[] __attribute__ ((unused)))

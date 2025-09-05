@@ -60,11 +60,6 @@ void mp_exec(const char *src, size_t len) {
         } else {
             printf("Warning: unexpected return value type from Python script\n");
         }
-        // if ( mp_obj_is_type(result, &mp_type_bool) ) {
-        //     correct = result == mp_const_true;
-        // } else {
-        //     printf("Warning: unexpected return value type from Python script\n");
-        // }
 
         printf("%s\n", BOOL_TO_STR(correct));
 

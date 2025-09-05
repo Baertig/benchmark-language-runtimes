@@ -19,6 +19,7 @@ endif
 
 export JERRY_HEAP = 100 # KiB
 export JERRY_STACK = 50 # KiB
+export JERRY_PROFILE ?= es5.1  # need for the Math module
 
 # Add the package for Jerryscript
 USEPKG += jerryscript

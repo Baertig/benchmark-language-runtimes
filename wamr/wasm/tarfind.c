@@ -11,8 +11,16 @@
 // #include <string.h>
 #include <stdint.h>
 
+// definitions come from RIOT/build/pkg/wamr/core/iwasm/libraries/libc-builtin/libc_builtin_wrapper.c 
+// search for wrapper_<function> and remove the first argument
+// --> At the bottom of the file they are registered
 extern uint32_t memset(void *s, int32_t c, uint32_t size);
-extern int printf( const char *, ...);
+extern int printf(const char *, ...);
+extern uint32_t malloc(uint32_t size);
+extern void free(void *ptr);
+/* rand is provided by host (registered native) */
+extern int rand(void);
+
 
 #include "support.h"
 
@@ -22,10 +30,6 @@ extern int printf( const char *, ...);
 #define ARCHIVE_FILES 35
 
 #define N_SEARCHES 5
-
-/* BEEBS heap is just an array */
-/* 8995 = sizeof(tar_header_t) * ARCHIVE_FILES */
-#define roundup(d, u) ((((d)+(u))/(u))*(u))
 
 // this is the basic TAR header format which is in ASCII
 typedef struct {
@@ -40,8 +44,6 @@ typedef struct {
   char linkedFile[100];
 } tar_header_t;
 
-#define HEAP_SIZE roundup((sizeof(tar_header_t) * ARCHIVE_FILES), sizeof(void *))
-static char _Alignas(_Alignof(tar_header_t)) heap[HEAP_SIZE]; 
 static int benchmark_body(unsigned int lsf, unsigned int gsf);
 
 void
@@ -71,11 +73,9 @@ benchmark_body(unsigned int lsf, unsigned int gsf)
   for (unsigned int lsf_cnt = 0; lsf_cnt < lsf; lsf_cnt++)
     for (unsigned int gsf_cnt = 0; gsf_cnt < gsf; gsf_cnt++)
       {
-	init_heap_beebs ((void *) heap, HEAP_SIZE);
-
 	// always create ARCHIVE_FILES files in the archive
 	int files = ARCHIVE_FILES;
-	hdr = malloc_beebs(sizeof(tar_header_t) * files);
+	hdr = (void*) malloc(sizeof(tar_header_t) * files);
 	for (i = 0; i < files; i++){
 	  // create record
 	  tar_header_t * c = & hdr[i];
@@ -84,7 +84,7 @@ benchmark_body(unsigned int lsf, unsigned int gsf)
 	  int flen = 5 + i % 94; // vary file lengths
 	  c->isLink = '0';
 	  for(p = 0; p < flen; p++){
-	    c->filename[p] = rand_beebs() % 26 + 65;
+	    c->filename[p] = rand() % 26 + 65;
 	  }
 	  c->size[0] = '0';
 	}
@@ -110,7 +110,7 @@ benchmark_body(unsigned int lsf, unsigned int gsf)
 	    }
 	  }
 	}
-	free_beebs(hdr);
+	free(hdr);
       }
 
   return found == N_SEARCHES;

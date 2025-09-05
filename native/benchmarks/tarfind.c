@@ -36,8 +36,6 @@ typedef struct {
   char linkedFile[100];
 } tar_header_t;
 
-#define HEAP_SIZE roundup((sizeof(tar_header_t) * ARCHIVE_FILES), sizeof(void *))
-static char _Alignas(_Alignof(tar_header_t)) heap[HEAP_SIZE]; 
 static int benchmark_body(unsigned int lsf, unsigned int gsf);
 
 
@@ -58,11 +56,10 @@ benchmark_body(unsigned int lsf, unsigned int gsf)
   for (unsigned int lsf_cnt = 0; lsf_cnt < lsf; lsf_cnt++)
     for (unsigned int gsf_cnt = 0; gsf_cnt < gsf; gsf_cnt++)
       {
-	init_heap_beebs ((void *) heap, HEAP_SIZE);
 
 	// always create ARCHIVE_FILES files in the archive
 	int files = ARCHIVE_FILES;
-	hdr = malloc_beebs(sizeof(tar_header_t) * files);
+	hdr = malloc(sizeof(tar_header_t) * files);
 	for (i = 0; i < files; i++){
 	  // create record
 	  tar_header_t * c = & hdr[i];
@@ -71,7 +68,7 @@ benchmark_body(unsigned int lsf, unsigned int gsf)
 	  int flen = 5 + i % 94; // vary file lengths
 	  c->isLink = '0';
 	  for(p = 0; p < flen; p++){
-	    c->filename[p] = rand_beebs() % 26 + 65;
+	    c->filename[p] = rand() % 26 + 65;
 	  }
 	  c->size[0] = '0';
 	}
@@ -97,7 +94,7 @@ benchmark_body(unsigned int lsf, unsigned int gsf)
 	    }
 	  }
 	}
-	free_beebs(hdr);
+	free(hdr);
       }
 
   return found == N_SEARCHES;

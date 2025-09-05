@@ -1,10 +1,3 @@
-"""
-Python port of the tarfind benchmark from C.
-Simulates searching for filenames within a TAR-like archive header list.
-"""
-
-
-# Constants mirroring the C version
 LOCAL_SCALE_FACTOR = 46
 ARCHIVE_FILES = 35
 N_SEARCHES = 5
@@ -13,12 +6,12 @@ GLOBAL_SCALE_FACTOR = 1
 
 seed = 0
 
-
+# The port to RIOT does include the module for random (i.e. MICROPY_PY_URANDOM is not defines)
+# See the configuration here: https://github.com/kaspar030/micropython/blob/add_riot_port/ports/riot/mpconfigport.h
 def randint():
     global seed
     seed = (seed * 1103515245 + 12345) & (1 << 31)
     return seed >> 16
-
 
 class TarHeader:
     def __init__(self):

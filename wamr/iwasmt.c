@@ -13,7 +13,23 @@
 
 #include "wasm_export.h"
 
+
+#define WAMR_APP_STACK_SIZE  (8 * 1024)
+#define WAMR_APP_HEAP_SIZE   (16 * 1024)
+
 uint32_t load_program_begin = 0;
+
+/* -------- Host (native) functions exposed to WASM modules -------- */
+/* Return a pseudo-random 32-bit signed integer (lower 31 bits of rand()). */
+static int32_t native_rand(void)
+{
+    return (int32_t)(rand() & 0x7fffffff);
+}
+
+/* Map of native symbols to expose. Export only rand (no seeding function). */
+static NativeSymbol native_symbols[] = {
+    { "rand",  native_rand,  "()i", NULL },
+};
 
 /* execs the main function in an instantiated module */
 static int iwasm_instance_exec_main(wasm_module_inst_t module_inst, int argc, char **argv)
@@ -40,8 +56,11 @@ int iwasm_module_exec_main(wasm_module_t wasm_module, int argc, char **argv)
 
     {   /* instantiate the module */
         char error_buf[128];
-        if (!(wasm_module_inst = wasm_runtime_instantiate(wasm_module, 8 * 1024,
-            8 * 1024, error_buf, sizeof(error_buf)))) {
+        if (!(wasm_module_inst = wasm_runtime_instantiate(
+            wasm_module, WAMR_APP_STACK_SIZE,
+            WAMR_APP_HEAP_SIZE,
+            error_buf,
+            sizeof(error_buf)))) {
             puts(error_buf);
             return -1;
             }
@@ -92,6 +111,13 @@ bool iwasm_runtime_init(void)
     /* initialize runtime environment */
     if (!wasm_runtime_full_init(&init_args)) {
         puts("Init runtime environment failed.");
+        return false;
+    }
+
+    /* Register native random functions so WASM modules can import them. */
+    if (!wasm_runtime_register_natives("env", native_symbols,
+            sizeof(native_symbols) / sizeof(NativeSymbol))) {
+        puts("Register native symbols failed.");
         return false;
     }
     return true;

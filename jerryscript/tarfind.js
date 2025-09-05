@@ -8,13 +8,6 @@ var N_SEARCHES = 5;
 var LOCAL_SCALE_FACTOR = 46;
 var GLOBAL_SCALE_FACTOR = 1;
 
-var seed = 0;
-
-function randint() {
-  seed = (seed * 1103515245 + 12345) & ((1 << 31) - 1);
-  return seed >> 16;
-}
-
 function TarHeader() {
   this.filename = "";
   this.mode = "";
@@ -33,7 +26,8 @@ function _gen_random_filename(length) {
   // Random uppercase A-Z string of given length
   var result = "";
   for (var i = 0; i < length; i++) {
-    result += CHARS[randint() % 26];
+    var random_int = Math.floor(Math.random() * 26);
+    result += CHARS[random_int];
   }
   return result;
 }
@@ -64,8 +58,8 @@ function benchmark_body(lsf, gsf) {
       // Perform N_SEARCHES lookups
       for (var p = 0; p < N_SEARCHES; p++) {
         // choose the position of the file to search for from the mid of the list
-        var search =
-          hdr[(p + ((ARCHIVE_FILES / 2) | 0)) % ARCHIVE_FILES].filename; // -> little js hack, because jerryscript does not support Math.floor, we just use | 0 instead -> converts a float number to a integer.
+        var pos = p + Math.floor(ARCHIVE_FILES / 2);
+        var search = hdr[pos % ARCHIVE_FILES].filename;
 
         // iterate through all files until found
         for (var i = 0; i < files; i++) {
