@@ -20,6 +20,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.live import Live
 from rich.text import Text
+from rich.table import Table
+import polars as pl
 
 
 console = Console()
@@ -431,6 +433,93 @@ class BenchmarkRunner:
             console.print(f"Error writing results to CSV: {e}", markup=False)
             sys.exit(1)
 
+    def display_aggregated_results(self) -> None:
+        """Display aggregated benchmark statistics in a rich table.
+
+        Groups results by (board, benchmark, environment) and computes mean and
+        standard deviation for execution_time_us, init_runtime_us, and load_program_us.
+        """
+        if not self.results:
+            console.print(
+                "No results collected yet. Run benchmarks first.", style="yellow")
+            return
+
+        # Convert list of dicts to Polars DataFrame
+        try:
+            df = pl.DataFrame(self.results)
+        except Exception as e:
+            console.print(f"Failed creating DataFrame: {e}", style="red")
+            return
+
+        # Ensure numeric columns are correct dtypes if present
+        numeric_cols = [
+            "execution_time_us",
+            "init_runtime_us",
+            "load_program_us",
+        ]
+
+        for col in numeric_cols:
+            df = df.with_columns(pl.col(col).cast(pl.Float64))
+
+        required_cols = {"board", "benchmark", "environment"}
+        if not required_cols.issubset(set(df.columns)):
+            console.print(
+                "Missing required columns for aggregation.", style="red")
+            return
+
+        # Perform aggregation
+        agg_exprs = []
+        for col in numeric_cols:
+            if col in df.columns:
+                agg_exprs.extend([
+                    pl.col(col).mean().alias(f"{col}_mean"),
+                    pl.col(col).std().alias(f"{col}_std"),
+                ])
+
+        if not agg_exprs:
+            console.print(
+                "No numeric timing columns found to aggregate.", style="yellow")
+            return
+
+        grouped = (
+            # type: ignore[arg-type]
+            df.group_by(["board", "benchmark", "environment"])
+              .agg(agg_exprs)
+              .sort(["board", "benchmark", "environment"])
+        )
+
+        # Build rich table
+        table = Table(title="Aggregated Benchmark Results", show_lines=False)
+        table.add_column("Board", style="bold")
+        table.add_column("Benchmark", style="bold")
+        table.add_column("Environment", style="bold")
+
+        for col in numeric_cols:
+            if f"{col}_mean" in grouped.columns:
+                table.add_column(f"{col} (mean)", justify="right")
+                table.add_column(f"{col} (std)", justify="right")
+
+        # Add rows
+        for row in grouped.iter_rows(named=True):  # type: ignore
+            cells = [
+                str(row.get("board", "")),
+                str(row.get("benchmark", "")),
+                str(row.get("environment", "")),
+            ]
+            for col in numeric_cols:
+                mean_key = f"{col}_mean"
+                std_key = f"{col}_std"
+                if mean_key in row:
+                    mean_val = row[mean_key]
+                    std_val = row[std_key]
+                    cells.append(
+                        f"{mean_val:.2f}" if mean_val is not None else "-")
+                    cells.append(
+                        f"{std_val:.2f}" if std_val is not None else "-")
+            table.add_row(*cells)
+
+        console.print(table)
+
 
 def main():
     """Main entry point for the benchmark script."""
@@ -478,6 +567,7 @@ def main():
     # Run benchmarks
     runner = BenchmarkRunner(args.config, args.board, args.port)
     runner.run_benchmarks()
+    runner.display_aggregated_results()
     runner.write_results_to_csv(args.output_csv)
 
 
