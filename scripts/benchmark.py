@@ -15,6 +15,7 @@ import sys
 import yaml
 from pathlib import Path
 from typing import List, Dict, Any, Optional
+from dataclasses import dataclass, field
 from rich.console import Console
 from rich.panel import Panel
 from rich.live import Live
@@ -24,16 +25,34 @@ from rich.text import Text
 console = Console()
 
 
+@dataclass
+class BenchmarkBoard:
+    """Represents a single benchmark configuration for a specific board.
+
+    One object corresponds to a (benchmark x board) combination parsed from YAML.
+    """
+
+    # Benchmark-level fields
+    name: str
+    filename: str
+    global_scale_factor: int
+    iterations: int
+
+    # Board-level fields
+    board_name: str
+    supported_environments: List[str] = field(default_factory=list)
+
+
 class Config:
     """Configuration class that loads and provides access to benchmark configuration."""
 
-    def __init__(self, benchmarks: List[Dict[str, Any]]):
+    def __init__(self, benchmarks: List[BenchmarkBoard]):
         """Initialize config with parsed data.
 
         Args:
-            benchmarks: List of benchmark configurations
+            benchmarks: List of (benchmark x board) configuration objects
         """
-        self.benchmarks = benchmarks
+        self.benchmarks: List[BenchmarkBoard] = benchmarks
 
     @classmethod
     def from_yml(cls, config_file: str) -> 'Config':
@@ -52,12 +71,56 @@ class Config:
             with open(config_file, 'r') as f:
                 config_data = yaml.safe_load(f)
 
-            if 'benchmarks' not in config_data:
+            if not isinstance(config_data, dict) or 'benchmarks' not in config_data:
                 console.print(
                     "Error: No 'benchmarks' section found in configuration file.", style="bold red")
                 sys.exit(1)
 
-            return cls(benchmarks=config_data['benchmarks'])
+            combos: List[BenchmarkBoard] = []
+
+            for bench in config_data.get('benchmarks', []) or []:
+                b_name = str(bench.get('name', '')).strip()
+                if not b_name:
+                    # Skip unnamed benchmarks
+                    continue
+
+                filename = str(bench.get('filename', b_name)).strip() or b_name
+                gsf = bench.get('global_scale_factor', 1)
+                gsf = int(gsf)
+
+                iterations = int(bench.get('iterations', 1))
+
+                boards = bench.get('boards', []) or []
+                for board in boards:
+                    board_name = str((board or {}).get(
+                        'board_name', '')).strip()
+                    if not board_name:
+                        # Skip board entries without a name
+                        continue
+                    envs_raw = (board or {}).get(
+                        'supported_environments', []) or []
+                    envs: List[str] = []
+                    for e in envs_raw:
+                        if isinstance(e, dict):
+                            ename = e.get('name')
+                        else:
+                            ename = e
+
+                        if ename:
+                            envs.append(str(ename).strip())
+
+                    combos.append(
+                        BenchmarkBoard(
+                            name=b_name,
+                            filename=filename,
+                            global_scale_factor=gsf,
+                            iterations=iterations,
+                            board_name=board_name,
+                            supported_environments=envs,
+                        )
+                    )
+
+            return cls(benchmarks=combos)
 
         except FileNotFoundError:
             console.print(
@@ -86,7 +149,7 @@ class BenchmarkRunner:
         self.config = Config.from_yml(config_file)
         self.results = []
 
-    def _run_command(self, command: List[str], cwd: str, monitor_benchmark: bool = False) -> Dict[str, Any]:
+    def _run_command(self, command: List[str], cwd: str, monitor_benchmark: bool = False, env: Dict = {}) -> Dict[str, Any]:
         """Run a shell command in the specified directory with real-time output monitoring.
 
         Args:
@@ -97,7 +160,7 @@ class BenchmarkRunner:
         Returns:
             Dictionary containing return code, captured output, and benchmark data if applicable
         """
-        env = os.environ.copy()
+        env = os.environ.copy() | env
         env['BOARD'] = self.board
         if self.port:
             env['PORT'] = self.port
@@ -235,7 +298,7 @@ class BenchmarkRunner:
 
         return results
 
-    def _run_benchmark_for_environment(self, benchmark: Dict[str, Any], env_name: str) -> bool:
+    def _run_benchmark_for_environment(self, benchmark: BenchmarkBoard, env_name: str) -> bool:
         """Run a benchmark for a specific environment.
 
         Args:
@@ -252,11 +315,22 @@ class BenchmarkRunner:
             return False
 
         console.print(
-            f"\n--- Running benchmark '{benchmark['name']}' in environment '{env_name}' ---")
+            f"\n--- Running benchmark '{benchmark.name}' in environment '{env_name}' ---")
 
         try:
             console.print("Building...")
-            build_result = self._run_command(['make', 'all'], str(env_dir))
+
+            command_env = {
+                'BOARD': self.board,
+                'BENCHMARK': benchmark.filename,
+                **({'PORT': self.port} if self.port else {})
+            }
+
+            build_result = self._run_command(
+                ['make', 'all'],
+                str(env_dir),
+                env=command_env)
+
             if build_result['returncode'] != 0:
                 console.print(f"Build failed for {env_name}", style="bold red")
                 return False
@@ -265,7 +339,8 @@ class BenchmarkRunner:
             if self.board.lower() != 'native':
                 console.print("Flashing...", style="bold")
                 flash_result = self._run_command(
-                    ['make', 'flash'], str(env_dir))
+                    ['make', 'flash'], str(env_dir), env=command_env)
+
                 if flash_result['returncode'] != 0:
                     console.print(
                         f"Flash failed for {env_name}", style="bold red")
@@ -275,7 +350,7 @@ class BenchmarkRunner:
             console.print(
                 "Running benchmark and monitoring output...", style="bold")
             term_result = self._run_command(
-                ['make', 'term'], str(env_dir), monitor_benchmark=True)
+                ['make', 'term'], str(env_dir), monitor_benchmark=True, env=command_env)
 
             # Use benchmark data from real-time monitoring
             benchmark_data = term_result['benchmark_data']
@@ -287,8 +362,9 @@ class BenchmarkRunner:
 
             # Add benchmark name and environment to each row
             for row in benchmark_data:
-                row['benchmark'] = benchmark['name']
+                row['benchmark'] = benchmark.name
                 row['environment'] = env_name
+                row['board'] = benchmark.board_name
                 self.results.append(row)
 
             console.print(
@@ -302,44 +378,29 @@ class BenchmarkRunner:
 
     def run_benchmarks(self) -> None:
         """Run all benchmarks defined in the configuration."""
-        for benchmark in self.config.benchmarks:
-            # New schema: benchmarks[].boards[].{board_name, supported_environments[]}
-            boards = benchmark.get('boards', [])
-            if not boards:
-                console.print(
-                    f"Warning: No boards listed for benchmark '{benchmark.get('name','<unnamed>')}'. Skipping.")
+        for bench in self.config.benchmarks:
+            # Only run combos matching the selected board
+            if bench.board_name.lower() != self.board.lower():
                 continue
 
-            # Find matching board configuration (case-insensitive match)
-            board_cfg = None
-            for b in boards:
-                bname = str(b.get('board_name', '')).strip()
-                if bname.lower() == self.board.lower():
-                    board_cfg = b
-                    break
-
-            if not board_cfg:
-                console.print(
-                    f"Info: Board '{self.board}' not configured for benchmark '{benchmark.get('name','<unnamed>')}'. Skipping.")
-                continue
-
-            supported_envs = board_cfg.get('supported_environments', [])
+            supported_envs = bench.supported_environments or []
             if not supported_envs:
                 console.print(
-                    f"Warning: No supported environments for board '{self.board}' in benchmark '{benchmark.get('name','<unnamed>')}'. Skipping.")
+                    f"Warning: No supported environments for board '{self.board}' in benchmark '{bench.name}'. Skipping.")
                 continue
 
-            console.print(f"\n=== Processing benchmark: {benchmark.get('name','<unnamed>')} (board: {self.board}) ===")
+            console.print(
+                f"\n=== Processing benchmark: {bench.name} (board: {self.board}) ===")
 
-            for env_config in supported_envs:
-                env_name = env_config.get('name')
+            for env_entry in supported_envs:
+                env_name = env_entry
                 if not env_name:
                     console.print("Warning: Encountered environment entry without a name. Skipping.")
                     continue
-                success = self._run_benchmark_for_environment(benchmark, env_name)
+                success = self._run_benchmark_for_environment(bench, env_name)
                 if not success:
                     console.print(
-                        f"Failed to run benchmark '{benchmark.get('name','<unnamed>')}' in environment '{env_name}'")
+                        f"Failed to run benchmark '{bench.name}' in environment '{env_name}'")
 
     def write_results_to_csv(self, output_file: str) -> None:
         """Write collected results to a CSV file.
