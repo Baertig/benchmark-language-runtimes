@@ -25,3 +25,31 @@ benchmarks:
         # - name: micropython -> micropython does not run on esp32 boards, they are blacklisted
         - name: native
         - name: wamr
+
+  - name: crc_32
+    filename: crc_32
+    global_scale_factor: 1
+    iterations: 5
+    boards: 
+    - board_name: native
+      supported_environments:
+        - name: jerryscript
+        - name: lua
+        - name: micropython
+        - name: native
+        - name: wamr
+    - board_name: adafruit-feather-nrf52840-sense 
+      supported_environments:
+        - name: jerryscript
+        # - name: lua --> not enough memory
+        - name: micropython
+        - name: native
+        - name: wamr
+    - board_name: esp32-wroom-32
+      supported_environments:
+        - name: jerryscript
+        - name: lua
+        # - name: micropython -> micropython does not run on esp32 boards, they are blacklisted
+        - name: native
+        - name: wamr
+
