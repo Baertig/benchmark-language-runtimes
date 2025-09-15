@@ -1,0 +1,54 @@
+mappings:
+  adafruit-feather-nrf52840-sense:
+    # jerryscript
+    - prefix: [pkg, jerryscript]
+      category: Runtime
+    - prefix: [app, prin_jerry_error.str1.1]
+      category: Runtime
+
+    - prefix: [app, benchmark_js]
+      category: Application
+    # micropython
+    - prefix: [app, bin, adafruit-feather-nrf52840-sense, pkg, micropython]
+      category: Runtime
+    - prefix: [app, bin, native64, pkg, micropython, py]
+      category: Runtime
+
+    - prefix: [app, mp_heap]
+      category: Runtime
+
+    - prefix: [app, benchmark_py]
+      category: Application
+
+    # native
+    - prefix: [app, benchmarks]
+      category: Application
+    - prefix: [app, main.str1.1]
+      category: Application
+    - prefix: [app, startup.main]
+      category: Application
+
+    # wamr
+    - prefix: [pkg, wamr]
+      category: Runtime
+
+    - prefix: [app, iwasm_bytecode_exec_main.str1.1]
+      category: Runtime
+
+    - prefix: [app, main_wasm]
+      category: Application
+    
+    # all
+    
+    - prefix: [newlib]
+      category: Kernel
+    - prefix: [core]
+      category: Kernel
+    - prefix: [sys]
+      category: Kernel
+    - prefix: [cpu]
+      category: Kernel
+    - prefix: [drivers]
+      category: Kernel
+    - prefix: [boards]
+      category: Kernel

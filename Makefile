@@ -14,6 +14,6 @@ bench-esp32-wroom-32:
 
 measure-memory:
 	mkdir -p data/memory figures/memory
-	pipenv run ./scripts/measure_memory.py --config benchmark-config.yml --csv-out data/memory/memory-sizes.csv --figures figures/memory
+	pipenv run ./scripts/measure_memory.py --config benchmark-config.yml --csv-out data/memory/memory-sizes.csv --figures figures/memory --mappings scripts/symbol-mappings.yml
 
 
