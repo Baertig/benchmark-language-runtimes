@@ -10,7 +10,7 @@
 #include "ztimer.h"
 #include "periph/pm.h"
 
-#include "blob/main.wasm.h"
+#include "blob/benchmark.wasm.h"
 
 bool iwasm_runtime_init(void);
 void iwasm_runtime_destroy(void);
@@ -45,7 +45,7 @@ int main(void)
             printf("Error when initializing iwasm runtime");
         }
 
-        bool correct = wamr_run_cp(main_wasm, main_wasm_len, 0, NULL);
+        bool correct = wamr_run_cp(benchmark_wasm, benchmark_wasm_len, 0, NULL);
         printf("%s\n", BOOL_TO_STR(correct));
 
         iwasm_runtime_destroy();

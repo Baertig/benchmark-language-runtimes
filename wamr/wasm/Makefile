@@ -67,5 +67,7 @@ COMPILE_FLAGS := -Wall \
 %.wat: %.wasm Makefile
 	wasm2wat -o $@ $<
 
-main.wasm: $(BENCHMARK) main.c
-main.wasm: COMPILE_FLAGS += -include $(BENCHMARK)
+.PHONY: .FORCE
+
+benchmark.wasm: COMPILE_FLAGS += -include $(BENCHMARK)
+benchmark.wasm: $(BENCHMARK) benchmark.c .FORCE

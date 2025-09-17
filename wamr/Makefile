@@ -21,7 +21,7 @@ ifeq (,$(filter native native32 native64,$(BOARD)))
 CFLAGS += -DTHREAD_STACKSIZE_MAIN='(6 * 1024)'
 endif
 
-BLOBS += main.wasm
+BLOBS += benchmark.wasm
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
@@ -33,13 +33,13 @@ QUIET ?= 1
 
 # RIOT_TERMINAL ?= miniterm
 #
-all: main.wasm
+all: benchmark.wasm
 
 .PHONY: .FORCE
 
-main.wasm: .FORCE
-	make -C wasm BENCHMARK=$(BENCHMARK_FILE) main.wasm
-	mv wasm/main.wasm .
+benchmark.wasm: .FORCE
+	make -C wasm BENCHMARK=$(BENCHMARK_FILE) benchmark.wasm
+	mv wasm/benchmark.wasm .
 
 include $(RIOTBASE)/Makefile.include
 
