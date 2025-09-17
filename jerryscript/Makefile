@@ -26,6 +26,7 @@ USEPKG += jerryscript
 
 # Include ztimer for time measurements
 USEMODULE += ztimer_usec
+USEMODULE += libc_gettimeofday
 # generate .js.h header files of .js files
 BENCHMARK ?= tarfind
 BENCHMARK_FILE = $(BENCHMARK).js
@@ -38,6 +39,15 @@ all: benchmark.js
 
 benchmark.js: .FORCE
 	cp $(BENCHMARK_FILE) benchmark.js
+
+callgrind: all-valgrind
+	valgrind --tool=callgrind $(ELFFILE)
+
+flamegraph: all
+	/usr/lib/linux-tools-6.8.0-79/perf record -g -- $(ELFFILE)
+	stackcollapse-perf.pl out.perf > out.folded
+	flamegraph.pl out.folded > benchmark.svg
+	google-chrome benchmark.svg
 
 include $(RIOTBASE)/Makefile.include
 

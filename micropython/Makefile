@@ -29,6 +29,14 @@ all: benchmark.py
 benchmark.py: .FORCE
 	cp $(BENCHMARK_FILE) benchmark.py
 
+flamegraph: all
+	sudo /usr/lib/linux-tools-6.8.0-79/perf record -g -- $(ELFFILE)
+	sudo chown georg-baer-dumont:georg-baer-dumont ./perf.data
+	/usr/lib/linux-tools-6.8.0-79/perf script > out.perf
+	stackcollapse-perf.pl out.perf > out.folded
+	flamegraph.pl out.folded > benchmark.svg
+	google-chrome benchmark.svg
+
 include $(RIOTBASE)/Makefile.include
 
 include ../Makefile.include
