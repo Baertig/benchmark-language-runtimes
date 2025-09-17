@@ -23,11 +23,14 @@ endif
 USEPKG += lua
 
 USEMODULE += ztimer_usec
-RIOT_TERMINAL ?= miniterm
 
 # generate .lua.h header files of .lua files
 BENCHMARK ?= tarfind
 BENCHMARK_FILE = $(BENCHMARK).lua
+
+ifeq ($(strip $(BENCHMARK)),crc_32)
+  CFLAGS += -DLUA_MEM_SIZE='(200 * 1024)'
+endif
 
 all: benchmark.lua
 

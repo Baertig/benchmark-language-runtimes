@@ -33,7 +33,9 @@
 
 #define BOOL_TO_STR(x) ((x) ? "True" : "False")
 
+#ifndef LUA_MEM_SIZE
 #define LUA_MEM_SIZE (350 * 1024)
+#endif
 
 static char lua_mem[LUA_MEM_SIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 

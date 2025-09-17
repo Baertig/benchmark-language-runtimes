@@ -40,8 +40,8 @@ benchmarks:
         - name: wamr
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
-        - name: jerryscript
-        # - name: lua --> not enough memory
+        # - name: jerryscript
+        - name: lua
         - name: micropython
         - name: native
         - name: wamr
