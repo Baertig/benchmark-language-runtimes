@@ -15,8 +15,6 @@ extern "C" {
 #endif
 
 enum {
-    BPF_FUNC_BPF_PRINTF,
-
     /* Key/value store functions */
     BPF_FUNC_BPF_STORE_LOCAL = 0x10,
     BPF_FUNC_BPF_STORE_GLOBAL = 0x11,
