@@ -27,6 +27,19 @@ import polars as pl
 console = Console()
 
 
+def print_dict_as_table(console: Console,
+                        data: dict,
+                        title: str = "Dictionary Contents",
+                        key_label: str = "Key",
+                        value_label: str = "Value"
+                        ) -> None:
+    table = Table(title=title)
+    table.add_column(key_label, style="bold")
+    table.add_column(value_label)
+    for key, value in data.items():
+        table.add_row(str(key), str(value))
+    console.print(table)
+
 @dataclass
 class BenchmarkBoard:
     """Represents a single benchmark configuration for a specific board.
@@ -37,7 +50,7 @@ class BenchmarkBoard:
     # Benchmark-level fields
     name: str
     filename: str
-    global_scale_factor: int
+    scale_factor: int
     iterations: int
 
     # Board-level fields
@@ -87,8 +100,8 @@ class Config:
                     continue
 
                 filename = str(bench.get('filename', b_name)).strip() or b_name
-                gsf = bench.get('global_scale_factor', 1)
-                gsf = int(gsf)
+                scale_factor = bench.get('scale_factor', 1)
+                scale_factor = int(scale_factor)
 
                 iterations = int(bench.get('iterations', 1))
 
@@ -115,7 +128,7 @@ class Config:
                         BenchmarkBoard(
                             name=b_name,
                             filename=filename,
-                            global_scale_factor=gsf,
+                            scale_factor=scale_factor,
                             iterations=iterations,
                             board_name=board_name,
                             supported_environments=envs,
@@ -162,14 +175,13 @@ class BenchmarkRunner:
         Returns:
             Dictionary containing return code, captured output, and benchmark data if applicable
         """
-        env = os.environ.copy() | env
-        env['BOARD'] = self.board
-        if self.port:
-            env['PORT'] = self.port
-
         console.print(f"Running: {' '.join(command)} in {cwd}")
+        print_dict_as_table(
+            console, env, title="Command Env", key_label="Variable")
 
-        # Initialize result structure
+        # If a key exists in both, the value from env (the right-hand side) overwrites the value from os.environ.copy().
+        env = os.environ.copy() | env
+
         result = {
             'returncode': 0,
             'stdout': '',
@@ -178,7 +190,6 @@ class BenchmarkRunner:
         }
 
         try:
-            # Start the process
             process = subprocess.Popen(
                 command,
                 cwd=cwd,
@@ -190,7 +201,6 @@ class BenchmarkRunner:
                 universal_newlines=True
             )
 
-            # Real-time monitoring variables
             start_marker = "=== Benchmark Begins ==="
             end_marker = "=== Benchmark End ==="
             in_benchmark = False
@@ -211,7 +221,7 @@ class BenchmarkRunner:
                         line = line.rstrip('\n\r')
                         all_output.append(line)
 
-                        # Clean the line for display and parsing
+                        # Remove timestamp prefix
                         cleaned_line = re.sub(
                             r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} # ', '', line)
                         if cleaned_line.startswith('#'):
@@ -325,6 +335,8 @@ class BenchmarkRunner:
             command_env = {
                 'BOARD': self.board,
                 'BENCHMARK': benchmark.filename,
+                'SCALE_FACTOR': str(benchmark.scale_factor),
+                'ITERATIONS': str(benchmark.iterations),
                 **({'PORT': self.port} if self.port else {})
             }
 
@@ -367,6 +379,7 @@ class BenchmarkRunner:
                 row['benchmark'] = benchmark.name
                 row['environment'] = env_name
                 row['board'] = benchmark.board_name
+                row['scale_factor'] = benchmark.scale_factor
                 self.results.append(row)
 
             console.print(
@@ -397,7 +410,8 @@ class BenchmarkRunner:
             for env_entry in supported_envs:
                 env_name = env_entry
                 if not env_name:
-                    console.print("Warning: Encountered environment entry without a name. Skipping.")
+                    console.print(
+                        "Warning: Encountered environment entry without a name. Skipping.")
                     continue
                 success = self._run_benchmark_for_environment(bench, env_name)
                 if not success:

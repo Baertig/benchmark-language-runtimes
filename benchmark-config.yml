@@ -1,7 +1,7 @@
 benchmarks:
   - name: tarfind
     filename: tarfind # (optional, default value is name) 
-    global_scale_factor: 5 
+    scale_factor: 46 
     iterations: 5
     boards:
     - board_name: native
@@ -28,7 +28,7 @@ benchmarks:
 
   - name: crc_32
     filename: crc_32
-    global_scale_factor: 1
+    scale_factor: 170
     iterations: 5
     boards: 
     - board_name: native
@@ -40,14 +40,14 @@ benchmarks:
         - name: wamr
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
-        # - name: jerryscript
+        # - name: jerryscript -> takes way too long because of the included Int64 library
         - name: lua
         - name: micropython
         - name: native
         - name: wamr
     - board_name: esp32-wroom-32
       supported_environments:
-        - name: jerryscript
+        # - name: jerryscript -> takes way too long because of the included Int64 library
         - name: lua
         # - name: micropython -> micropython does not run on esp32 boards, they are blacklisted
         - name: native
