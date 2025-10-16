@@ -21,10 +21,12 @@ SRC += main.c
 # which is not needed in a production environment but helps in the
 # development process:
 DEVELHELP ?= 1
-GLOBAL_SCALE_FACTOR ?= 1
+ITERATIONS ?= 1
+SCALE_FACTOR ?= 1
 
 CFLAGS += -DCONFIG_MAIN_EXIT_ON_RETURN=1
-CFLAGS += -DGLOBAL_SCALE_FACTOR=$(GLOBAL_SCALE_FACTOR)
+CFLAGS += -DSCALE_FACTOR=$(SCALE_FACTOR)
+CFLAGS += -DBENCH_ITERATIONS=$(ITERATIONS)
 
 WERROR ?= 0
 # Change this to 0 show compiler invocation lines by default:
