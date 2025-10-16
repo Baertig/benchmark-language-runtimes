@@ -29,7 +29,12 @@ USEMODULE += ztimer_usec
 USEMODULE += libc_gettimeofday
 # generate .js.h header files of .js files
 BENCHMARK ?= tarfind
-BENCHMARK_FILE = $(BENCHMARK).js
+BENCHMARK_FILE = benchmarks/$(BENCHMARK).js
+
+SCALE_FACTOR ?= 1
+ITERATIONS ?= 1
+
+CFLAGS += -DBENCH_ITERATIONS=$(ITERATIONS)
 
 BLOBS += benchmark.js
 
@@ -39,6 +44,8 @@ all: benchmark.js
 
 benchmark.js: .FORCE
 	cp $(BENCHMARK_FILE) benchmark.js
+	sed -i "s/SCALE_FACTOR = .*/SCALE_FACTOR = $(SCALE_FACTOR);/" benchmark.js
+	@grep "SCALE_FACTOR =" benchmark.js
 
 callgrind: all-valgrind
 	valgrind --tool=callgrind $(ELFFILE)

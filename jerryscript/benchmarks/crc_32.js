@@ -1400,8 +1400,7 @@ Long.fromBytesBE = function fromBytesBE(bytes, unsigned) {
   );
 };
 
-var LOCAL_SCALE_FACTOR = 170; // from #define LOCAL_SCALE_FACTOR 170
-var GLOBAL_SCALE_FACTOR = 1; // default fallback for JS (C expects external define)
+var SCALE_FACTOR = 1;
 
 // CRC table (256 entries) — polynomial 0xEDB88320
 var crc_32_tab = [
@@ -1477,15 +1476,12 @@ function crc32pseudo() {
 }
 
 function benchmark() {
-  var lsf = LOCAL_SCALE_FACTOR;
-  var gsf = GLOBAL_SCALE_FACTOR;
+  var sf = SCALE_FACTOR;
   var r = 0;
 
-  for (var l = 0; l < lsf; l++) {
-    for (var g = 0; g < gsf; g++) {
-      srand_beebs(Long.fromInt(0));
-      r = crc32pseudo();
-    }
+  for (var g = 0; g < sf; g++) {
+    srand_beebs(Long.fromInt(0));
+    r = crc32pseudo();
   }
 
   return r % 32768 === 11433;
