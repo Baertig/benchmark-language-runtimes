@@ -17,9 +17,15 @@ ifeq (,$(filter native native32 native64,$(BOARD)))
 CFLAGS += -DTHREAD_STACKSIZE_MAIN=9092
 endif
 
-export JERRY_HEAP = 100 # KiB
-export JERRY_STACK = 50 # KiB
-export JERRY_PROFILE ?= es5.1  # need for the Math module
+HEAP ?= 100 #KiB
+STACK ?= 50 #KiB
+PROFILE ?= es5.1 # need for the Math module
+
+export JERRY_HEAP = $(HEAP) 
+export JERRY_STACK = $(STACK) 
+export JERRY_PROFILE = $(PROFILE)
+
+
 
 # Add the package for Jerryscript
 USEPKG += jerryscript
@@ -38,7 +44,7 @@ CFLAGS += -DBENCH_ITERATIONS=$(ITERATIONS)
 
 BLOBS += benchmark.js
 
-all: benchmark.js
+all: check_config benchmark.js
 
 .PHONY: .FORCE
 
@@ -46,6 +52,13 @@ benchmark.js: .FORCE
 	cp $(BENCHMARK_FILE) benchmark.js
 	sed -i "s/SCALE_FACTOR = .*/SCALE_FACTOR = $(SCALE_FACTOR);/" benchmark.js
 	@grep "SCALE_FACTOR =" benchmark.js
+
+# rebuild jerryscript if config does not match
+check_config: .FORCE
+	@if [ ! -f .jerry_config ] || [ "$$(cat .jerry_config)" != "$(HEAP);$(STACK);$(PROFILE)" ]; then \
+		echo "$(HEAP);$(STACK);$(PROFILE)" > .jerry_config; \
+		$(MAKE) clean-pkg; \
+	fi
 
 callgrind: all-valgrind
 	valgrind --tool=callgrind $(ELFFILE)

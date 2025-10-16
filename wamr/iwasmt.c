@@ -14,8 +14,13 @@
 #include "wasm_export.h"
 
 
-#define WAMR_APP_STACK_SIZE  (8 * 1024)
-#define WAMR_APP_HEAP_SIZE   (16 * 1024)
+#ifndef WAMR_APP_STACK_SIZE
+#define WAMR_APP_STACK_SIZE (8 * 1024)
+#endif
+
+#ifndef WAMR_APP_HEAP_SIZE
+#define WAMR_APP_HEAP_SIZE (16 * 1024)
+#endif
 
 uint32_t load_program_begin = 0;
 

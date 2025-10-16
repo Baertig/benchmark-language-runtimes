@@ -29,6 +29,8 @@ BLOBS += benchmark.wasm
 DEVELHELP ?= 1
 SCALE_FACTOR ?= 1
 ITERATIONS ?= 1
+HEAP ?= 16384
+STACK ?= 8192
 
 CFLAGS += -DBENCH_ITERATIONS=$(ITERATIONS)
 
@@ -42,7 +44,7 @@ all: benchmark.wasm
 .PHONY: .FORCE
 
 benchmark.wasm: .FORCE
-	make -C wasm SCALE_FACTOR=$(SCALE_FACTOR) BENCHMARK=$(BENCHMARK_FILE) benchmark.wasm
+	make -C wasm HEAP=$(HEAP) STACK=$(STACK) SCALE_FACTOR=$(SCALE_FACTOR) BENCHMARK=$(BENCHMARK_FILE) benchmark.wasm
 	mv wasm/benchmark.wasm .
 
 include $(RIOTBASE)/Makefile.include

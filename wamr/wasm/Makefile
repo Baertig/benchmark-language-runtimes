@@ -37,6 +37,8 @@ BUILTINS := $(firstword $(wildcard \
 #	-> heap needs a second page
 # wasm-ld 8 and 11 do not need --initial-memory=64kB
 SCALE_FACTOR ?= 1
+HEAP ?= 16384
+STACK ?= 8192
 
 COMPILE_FLAGS := -Wall \
 		-Os \
@@ -46,6 +48,8 @@ COMPILE_FLAGS := -Wall \
 		-fdata-sections \
 		-nostdlib \
 		-DSCALE_FACTOR=$(SCALE_FACTOR) \
+		-DWAMR_APP_HEAP_SIZE=$(HEAP) \
+		-DWAMR_APP_STACK_SIZE=$(STACK)
 
 %.show: %.wasm
 	wasm2wat $<

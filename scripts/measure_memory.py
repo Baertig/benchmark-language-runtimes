@@ -17,6 +17,8 @@ from rich.text import Text
 import altair as alt
 import polars as pl
 
+from config import Config
+
 
 class SymbolType(Enum):
     """Symbol section types as reported by cosy.
@@ -59,14 +61,6 @@ class SymbolType(Enum):
             SymbolType.RODATA: ".rodata",
             SymbolType.UNKNOWN: "unknown"
         }.get(self)
-
-
-def load_config(config_file):
-    try:
-        with open(config_file) as f:
-            return yaml.safe_load(f)
-    except Exception as e:
-        raise RuntimeError(f"Error loading {config_file}: {e}")
 
 
 def load_mappings(mappings_file):
@@ -380,26 +374,27 @@ def main():
 
     try:
         mappings = load_mappings(args.mappings)
-        config = load_config(args.config)
+        config = Config.from_yml(args.config)
     except RuntimeError as e:
         console.print(f"[red]{e}[/red]")
         sys.exit(1)
 
     results = []
 
-    for bench in config['benchmarks']:
-        bench_name = bench['name']
-        filename = bench.get('filename', bench_name)
+    for bb in config.benchmarks:
+        bench_name = bb.name
+        filename = bb.filename
+        board_name = bb.board_name
 
-        for board in bench['boards']:
-            board_name = board['board_name']
+        for env_entry in bb.supported_environments:
+            env_name = env_entry['name']
+            disabled = env_entry.get('disabled', False)
+            if disabled:
+                continue
 
-            for env in board['supported_environments']:
-                env_name = env['name']
-
-                combo_results = process_combination(
-                    console, bench_name, filename, board_name, env_name, mappings)
-                results.extend(combo_results)
+            combo_results = process_combination(
+                console, bench_name, filename, board_name, env_name, mappings)
+            results.extend(combo_results)
 
     try:
         write_csv(results, args.csv_out)

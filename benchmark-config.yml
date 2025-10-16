@@ -7,14 +7,30 @@ benchmarks:
     - board_name: native
       supported_environments:
         - name: jerryscript
+          env:
+            HEAP: 100
+            STACK: 50
+            PROFILE: es5.1
+
         - name: lua
+          env:
+            HEAP: 204800 # 200 * 1024
+
         - name: micropython
+          env:
+            HEAP: 32768 # 32 * 1024
+
         - name: native
         - name: wamr
+          env: 
+            HEAP: 16384 # 16 * 1024
+            STACK: 8192 # 8 * 1024
+
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
         - name: jerryscript
-        # - name: lua --> not enough memory
+        - name: lua
+          disabled: true # -> not enough memory
         - name: micropython
         - name: native
         - name: wamr
@@ -22,7 +38,8 @@ benchmarks:
       supported_environments:
         - name: jerryscript
         - name: lua
-        # - name: micropython -> micropython does not run on esp32 boards, they are blacklisted
+        - name: micropython 
+          disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
         - name: native
         - name: wamr
 
@@ -34,22 +51,28 @@ benchmarks:
     - board_name: native
       supported_environments:
         - name: jerryscript
+          env:
+            PROFILE: es5.1
+
         - name: lua
         - name: micropython
         - name: native
         - name: wamr
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
-        # - name: jerryscript -> takes way too long because of the included Int64 library
+        - name: jerryscript 
+          disabled: true # -> takes way too long because of the included Int64 library
         - name: lua
         - name: micropython
         - name: native
         - name: wamr
     - board_name: esp32-wroom-32
       supported_environments:
-        # - name: jerryscript -> takes way too long because of the included Int64 library
+        - name: jerryscript 
+          disabled: true # -> takes way too long because of the included Int64 library
         - name: lua
-        # - name: micropython -> micropython does not run on esp32 boards, they are blacklisted
+        - name: micropython 
+          disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
         - name: native
         - name: wamr
 

@@ -12,10 +12,9 @@ import os
 import re
 import subprocess
 import sys
-import yaml
 from pathlib import Path
 from typing import List, Dict, Any, Optional
-from dataclasses import dataclass, field
+
 from rich.console import Console
 from rich.panel import Panel
 from rich.live import Live
@@ -23,9 +22,9 @@ from rich.text import Text
 from rich.table import Table
 import polars as pl
 
+from config import BenchmarkBoard, Config
 
 console = Console()
-
 
 def print_dict_as_table(console: Console,
                         data: dict,
@@ -39,112 +38,6 @@ def print_dict_as_table(console: Console,
     for key, value in data.items():
         table.add_row(str(key), str(value))
     console.print(table)
-
-@dataclass
-class BenchmarkBoard:
-    """Represents a single benchmark configuration for a specific board.
-
-    One object corresponds to a (benchmark x board) combination parsed from YAML.
-    """
-
-    # Benchmark-level fields
-    name: str
-    filename: str
-    scale_factor: int
-    iterations: int
-
-    # Board-level fields
-    board_name: str
-    supported_environments: List[str] = field(default_factory=list)
-
-
-class Config:
-    """Configuration class that loads and provides access to benchmark configuration."""
-
-    def __init__(self, benchmarks: List[BenchmarkBoard]):
-        """Initialize config with parsed data.
-
-        Args:
-            benchmarks: List of (benchmark x board) configuration objects
-        """
-        self.benchmarks: List[BenchmarkBoard] = benchmarks
-
-    @classmethod
-    def from_yml(cls, config_file: str) -> 'Config':
-        """Load configuration from a YAML file.
-
-        Args:
-            config_file: Path to the YAML configuration file
-
-        Returns:
-            Config object with loaded configuration
-
-        Raises:
-            SystemExit: If file not found or YAML parsing fails
-        """
-        try:
-            with open(config_file, 'r') as f:
-                config_data = yaml.safe_load(f)
-
-            if not isinstance(config_data, dict) or 'benchmarks' not in config_data:
-                console.print(
-                    "Error: No 'benchmarks' section found in configuration file.", style="bold red")
-                sys.exit(1)
-
-            combos: List[BenchmarkBoard] = []
-
-            for bench in config_data.get('benchmarks', []) or []:
-                b_name = str(bench.get('name', '')).strip()
-                if not b_name:
-                    # Skip unnamed benchmarks
-                    continue
-
-                filename = str(bench.get('filename', b_name)).strip() or b_name
-                scale_factor = bench.get('scale_factor', 1)
-                scale_factor = int(scale_factor)
-
-                iterations = int(bench.get('iterations', 1))
-
-                boards = bench.get('boards', []) or []
-                for board in boards:
-                    board_name = str((board or {}).get(
-                        'board_name', '')).strip()
-                    if not board_name:
-                        # Skip board entries without a name
-                        continue
-                    envs_raw = (board or {}).get(
-                        'supported_environments', []) or []
-                    envs: List[str] = []
-                    for e in envs_raw:
-                        if isinstance(e, dict):
-                            ename = e.get('name')
-                        else:
-                            ename = e
-
-                        if ename:
-                            envs.append(str(ename).strip())
-
-                    combos.append(
-                        BenchmarkBoard(
-                            name=b_name,
-                            filename=filename,
-                            scale_factor=scale_factor,
-                            iterations=iterations,
-                            board_name=board_name,
-                            supported_environments=envs,
-                        )
-                    )
-
-            return cls(benchmarks=combos)
-
-        except FileNotFoundError:
-            console.print(
-                f"Error: Configuration file '{config_file}' not found.", style="bold red")
-            sys.exit(1)
-        except yaml.YAMLError as e:
-            console.print(
-                f"Error parsing YAML configuration: {e}", markup=False)
-            sys.exit(1)
 
 
 class BenchmarkRunner:
@@ -179,6 +72,7 @@ class BenchmarkRunner:
         print_dict_as_table(
             console, env, title="Command Env", key_label="Variable")
 
+        env = {k: str(v) for k, v in env.items()}
         # If a key exists in both, the value from env (the right-hand side) overwrites the value from os.environ.copy().
         env = os.environ.copy() | env
 
@@ -310,16 +204,19 @@ class BenchmarkRunner:
 
         return results
 
-    def _run_benchmark_for_environment(self, benchmark: BenchmarkBoard, env_name: str) -> bool:
+    def _run_benchmark_for_environment(self, benchmark: BenchmarkBoard, env_entry: Dict[str, Any]) -> bool:
         """Run a benchmark for a specific environment.
 
         Args:
             benchmark: Benchmark configuration
-            env_name: Environment name (directory name)
+            env_entry: Environment entry dict
 
         Returns:
             True if benchmark completed successfully, False otherwise
         """
+        env_name = env_entry['name']
+        env_label = env_entry.get('label', env_name)
+        env_vars = env_entry.get('env', {})
         env_dir = Path(env_name)
         if not env_dir.exists():
             console.print(
@@ -327,7 +224,7 @@ class BenchmarkRunner:
             return False
 
         console.print(
-            f"\n--- Running benchmark '{benchmark.name}' in environment '{env_name}' ---")
+            f"\n--- Running benchmark '{benchmark.name}' in environment '{env_label}' ---")
 
         try:
             console.print("Building...")
@@ -335,9 +232,10 @@ class BenchmarkRunner:
             command_env = {
                 'BOARD': self.board,
                 'BENCHMARK': benchmark.filename,
-                'SCALE_FACTOR': str(benchmark.scale_factor),
-                'ITERATIONS': str(benchmark.iterations),
-                **({'PORT': self.port} if self.port else {})
+                'SCALE_FACTOR': benchmark.scale_factor,
+                'ITERATIONS': benchmark.iterations,
+                **({'PORT': self.port} if self.port else {}),
+                **env_vars
             }
 
             build_result = self._run_command(
@@ -346,7 +244,8 @@ class BenchmarkRunner:
                 env=command_env)
 
             if build_result['returncode'] != 0:
-                console.print(f"Build failed for {env_name}", style="bold red")
+                console.print(
+                    f"Build failed for {env_label}", style="bold red")
                 return False
 
             # Step 2: Flash (only if board is not native)
@@ -357,7 +256,7 @@ class BenchmarkRunner:
 
                 if flash_result['returncode'] != 0:
                     console.print(
-                        f"Flash failed for {env_name}", style="bold red")
+                        f"Flash failed for {env_label}", style="bold red")
                     return False
 
             # Step 3: Run and capture output with real-time monitoring
@@ -371,24 +270,24 @@ class BenchmarkRunner:
 
             if not benchmark_data:
                 console.print(
-                    f"No valid benchmark data extracted from {env_name}", style="yellow")
+                    f"No valid benchmark data extracted from {env_label}", style="yellow")
                 return False
 
             # Add benchmark name and environment to each row
             for row in benchmark_data:
                 row['benchmark'] = benchmark.name
-                row['environment'] = env_name
+                row['environment'] = env_label
                 row['board'] = benchmark.board_name
                 row['scale_factor'] = benchmark.scale_factor
                 self.results.append(row)
 
             console.print(
-                f"Successfully collected {len(benchmark_data)} data points from {env_name}")
+                f"Successfully collected {len(benchmark_data)} data points from {env_label}")
             return True
 
         except Exception as e:
             console.print(
-                f"Error running benchmark in {env_name}: {e}", markup=False)
+                f"Error running benchmark in {env_label}: {e}", markup=False)
             return False
 
     def run_benchmarks(self) -> None:
@@ -399,6 +298,7 @@ class BenchmarkRunner:
                 continue
 
             supported_envs = bench.supported_environments or []
+
             if not supported_envs:
                 console.print(
                     f"Warning: No supported environments for board '{self.board}' in benchmark '{bench.name}'. Skipping.")
@@ -408,15 +308,15 @@ class BenchmarkRunner:
                 f"\n=== Processing benchmark: {bench.name} (board: {self.board}) ===")
 
             for env_entry in supported_envs:
-                env_name = env_entry
-                if not env_name:
-                    console.print(
-                        "Warning: Encountered environment entry without a name. Skipping.")
+                if env_entry.get('disabled', False):
                     continue
-                success = self._run_benchmark_for_environment(bench, env_name)
+                env_name = env_entry['name']
+                env_label = env_entry.get('label', env_name)
+
+                success = self._run_benchmark_for_environment(bench, env_entry)
                 if not success:
                     console.print(
-                        f"Failed to run benchmark '{bench.name}' in environment '{env_name}'")
+                        f"Failed to run benchmark '{bench.name}' in environment '{env_label}'")
 
     def write_results_to_csv(self, output_file: str) -> None:
         """Write collected results to a CSV file.

@@ -11,11 +11,12 @@ BENCHMARK ?= tarfind
 BENCHMARK_FILE = benchmarks/$(BENCHMARK).py
 ITERATIONS ?= 1
 SCALE_FACTOR ?= 1
+HEAP ?= 32768
 
 BLOBS += benchmark.py
 
 # configure MicroPython's heap size
-MP_RIOT_HEAPSIZE ?= $(shell echo $$((32 * 1024)))
+MP_RIOT_HEAPSIZE = $(HEAP)
 
 # MicroPython needs a larger stack
 CFLAGS += '-DTHREAD_STACKSIZE_MAIN=THREAD_STACKSIZE_DEFAULT*4'
