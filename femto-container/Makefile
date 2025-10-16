@@ -14,10 +14,23 @@ DEVELHELP ?= 1
 
 USEPKG += femto-container
 
-BLOBS += ebpf/crc_32.bin
+BENCHMARK ?= crc_32
+BENCHMARK_FILE = $(BENCHMARK).c
+
+BLOBS += ebpf/$(BENCHMARK).bin
 
 CFLAGS += -DFEMTO_CONTAINER_BRANCHES_ALLOWED=2000000
 
+all: $(BLOBS)
+
+ebpf/%.bin: ebpf/%.c ebpf/%.o
+	$(MAKE) -C ebpf all
+
+.PHONY: clean-ebpf
+clean-ebpf:
+	$(MAKE) -C ebpf clean
+
+clean: clean-ebpf
 
 include $(RIOTBASE)/Makefile.include
 
