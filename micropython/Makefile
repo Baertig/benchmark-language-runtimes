@@ -8,7 +8,9 @@ USEPKG += micropython
 USEMODULE += ztimer_usec
 
 BENCHMARK ?= tarfind
-BENCHMARK_FILE = $(BENCHMARK).py
+BENCHMARK_FILE = benchmarks/$(BENCHMARK).py
+ITERATIONS ?= 1
+SCALE_FACTOR ?= 1
 
 BLOBS += benchmark.py
 
@@ -17,6 +19,7 @@ MP_RIOT_HEAPSIZE ?= $(shell echo $$((32 * 1024)))
 
 # MicroPython needs a larger stack
 CFLAGS += '-DTHREAD_STACKSIZE_MAIN=THREAD_STACKSIZE_DEFAULT*4'
+CFLAGS += -DBENCH_ITERATIONS=$(ITERATIONS)
 
 # use miniterm (instead of the default pyterm) in order to support control
 # characters (CTRL-D ...)
@@ -28,6 +31,8 @@ all: benchmark.py
 
 benchmark.py: .FORCE
 	cp $(BENCHMARK_FILE) benchmark.py
+	sed -i "s/SCALE_FACTOR = .*/SCALE_FACTOR = $(SCALE_FACTOR);/" benchmark.py
+	@grep "SCALE_FACTOR =" benchmark.py
 
 flamegraph: all
 	sudo /usr/lib/linux-tools-6.8.0-79/perf record -g -- $(ELFFILE)

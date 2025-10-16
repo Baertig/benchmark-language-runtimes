@@ -1,10 +1,5 @@
-# MicroPython translation of native/benchmarks/crc_32.c
+SCALE_FACTOR = 170
 
-# Constants
-LOCAL_SCALE_FACTOR = 170
-GLOBAL_SCALE_FACTOR = 1  # default for embedded runs
-
-# CRC table (256 entries), polynomial 0xEDB88320
 crc_32_tab = (
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
     0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
@@ -79,11 +74,10 @@ def crc32pseudo():
 
 
 def benchmark():
-    lsf = LOCAL_SCALE_FACTOR
-    gsf = GLOBAL_SCALE_FACTOR
+    sf = SCALE_FACTOR
     r = 0
-    for _ in range(lsf):
-        for _ in range(gsf):
-            srand_beebs(0)
-            r = crc32pseudo()
+    for _ in range(sf):
+        srand_beebs(0)
+        r = crc32pseudo()
+
     return (r % 32768) == 11433
