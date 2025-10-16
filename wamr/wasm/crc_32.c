@@ -1,6 +1,8 @@
 /* This scale factor will be changed to equalise the runtime of the
    benchmarks. */
-#define LOCAL_SCALE_FACTOR 170
+#ifndef SCALE_FACTOR
+#define SCALE_FACTOR 1
+#endif
 
 /**********************************************************************\
   |* Demonstration program to compute the 32-bit CRC used as the frame  *|
@@ -152,16 +154,14 @@ crc32pseudo ()
 int
 benchmark (void)
 {
-  unsigned int lsf = LOCAL_SCALE_FACTOR;
-  unsigned int gsf = GLOBAL_SCALE_FACTOR;
+  unsigned int sf = SCALE_FACTOR;
   int i;
   DWORD r;
 
-  for (unsigned int lsf_cnt = 0; lsf_cnt < lsf; lsf_cnt++)
-    for (unsigned int gsf_cnt = 0; gsf_cnt < gsf; gsf_cnt++) {
-        srand_beebs(0);
-        r = crc32pseudo();
-      }
+  for (unsigned int sf_cnt = 0; sf_cnt < sf; sf_cnt++) {
+    srand_beebs(0);
+    r = crc32pseudo();
+  }
 
   return (int) (r % 32768) == 11433;
 }

@@ -36,7 +36,7 @@ BUILTINS := $(firstword $(wildcard \
 # without stack-size option stack will start at 64kB
 #	-> heap needs a second page
 # wasm-ld 8 and 11 do not need --initial-memory=64kB
-GLOBAL_SCALE_FACTOR ?= 1
+SCALE_FACTOR ?= 1
 
 COMPILE_FLAGS := -Wall \
 		-Os \
@@ -45,7 +45,7 @@ COMPILE_FLAGS := -Wall \
 		-ffunction-sections \
 		-fdata-sections \
 		-nostdlib \
-		-DGLOBAL_SCALE_FACTOR=1 \
+		-DSCALE_FACTOR=$(SCALE_FACTOR) \
 
 %.show: %.wasm
 	wasm2wat $<

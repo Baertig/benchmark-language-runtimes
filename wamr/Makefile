@@ -27,6 +27,10 @@ BLOBS += benchmark.wasm
 # which is not needed in a production environment but helps in the
 # development process:
 DEVELHELP ?= 1
+SCALE_FACTOR ?= 1
+ITERATIONS ?= 1
+
+CFLAGS += -DBENCH_ITERATIONS=$(ITERATIONS)
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
@@ -38,7 +42,7 @@ all: benchmark.wasm
 .PHONY: .FORCE
 
 benchmark.wasm: .FORCE
-	make -C wasm BENCHMARK=$(BENCHMARK_FILE) benchmark.wasm
+	make -C wasm SCALE_FACTOR=$(SCALE_FACTOR) BENCHMARK=$(BENCHMARK_FILE) benchmark.wasm
 	mv wasm/benchmark.wasm .
 
 include $(RIOTBASE)/Makefile.include
