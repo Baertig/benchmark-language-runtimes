@@ -1,8 +1,4 @@
--- Lua 5.3 translation of native/benchmarks/crc_32.c
-
--- Constants
-local LOCAL_SCALE_FACTOR = 170
-local GLOBAL_SCALE_FACTOR = 1 -- default for Lua environment
+local SCALE_FACTOR = 1
 
 -- CRC table (256 entries), polynomial 0xEDB88320
 local crc_32_tab = {
@@ -51,8 +47,7 @@ local crc_32_tab = {
 	0xb40bbe37,0xc30c8ea1,0x5a05df1b,0x2d02ef8d
 }
 
--- BEEBS RNG implementation
-local seed = 0 -- 32-bit
+local seed = 0 
 
 local function srand_beebs(new_seed)
 	seed = new_seed & 0xffffffff
@@ -80,15 +75,13 @@ local function crc32pseudo()
 end
 
 local function benchmark()
-	local lsf = LOCAL_SCALE_FACTOR
-	local gsf = GLOBAL_SCALE_FACTOR
+	local sf = SCALE_FACTOR
 	local r = 0
-	for l = 1, lsf do
-		for g = 1, gsf do
-			srand_beebs(0)
-			r = crc32pseudo()
-		end
+	for g = 1, sf do
+		srand_beebs(0)
+		r = crc32pseudo()
 	end
+
 	return (r % 32768) == 11433
 end
 

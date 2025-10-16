@@ -26,7 +26,11 @@ USEMODULE += ztimer_usec
 
 # generate .lua.h header files of .lua files
 BENCHMARK ?= tarfind
-BENCHMARK_FILE = $(BENCHMARK).lua
+BENCHMARK_FILE = benchmarks/$(BENCHMARK).lua
+ITERATIONS ?= 1
+SCALE_FACTOR ?= 1
+
+CFLAGS += -DBENCH_ITERATIONS=$(ITERATIONS)
 
 ifeq ($(strip $(BENCHMARK)),crc_32)
   CFLAGS += -DLUA_MEM_SIZE='(200 * 1024)'
@@ -38,6 +42,8 @@ all: benchmark.lua
 
 benchmark.lua: .FORCE
 	cp $(BENCHMARK_FILE) benchmark.lua
+	sed -i "s/SCALE_FACTOR = .*/SCALE_FACTOR = $(SCALE_FACTOR);/" benchmark.lua
+	@grep "SCALE_FACTOR =" benchmark.lua
 
 BLOBS += benchmark.lua
 

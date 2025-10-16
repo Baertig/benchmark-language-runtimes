@@ -1,11 +1,6 @@
--- Lua port of the tarfind benchmark from the provided Python version
--- Simulates searching for filenames within a TAR-like archive header list.
-
--- Constants mirroring the Python version
-local LOCAL_SCALE_FACTOR = 46
+local SCALE_FACTOR = 1
 local ARCHIVE_FILES = 35
 local N_SEARCHES = 5
-local GLOBAL_SCALE_FACTOR = 1
 
 local function gen_random_filename(length)
   -- Random uppercase A-Z string of given length (but using the RNG above)
@@ -30,11 +25,11 @@ local function new_tar_header()
   }
 end
 
-local function benchmark_body(lsf, gsf)
+local function benchmark()
+  sf = SCALE_FACTOR
   local found = 0
 
-  for _ = 1, lsf do
-    for _ = 1, gsf do
+    for _ = 1, sf do
       local files = ARCHIVE_FILES
       local hdr = {}
 
@@ -66,15 +61,10 @@ local function benchmark_body(lsf, gsf)
           end
         end
       end
-    end
   end
 
   return (found == N_SEARCHES) 
 end
 
-
-local function benchmark()
-  return benchmark_body(LOCAL_SCALE_FACTOR, GLOBAL_SCALE_FACTOR)
-end
 
 return benchmark()
