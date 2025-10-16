@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "obj.h": "c",
+    "builtin_shared.h": "c",
+    "shared.h": "c",
+    "femtocontainer.h": "c"
+  }
+}
