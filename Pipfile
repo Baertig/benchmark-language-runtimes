@@ -12,6 +12,11 @@ rich = "*"
 jupyter = "*"
 polars = "*"
 altair = "*"
+scikit-learn = "*"
+xgboost = "*"
+numpy = "*"
+pandas = "*"
+matplotlib = "*"
 
 [dev-packages]
 
