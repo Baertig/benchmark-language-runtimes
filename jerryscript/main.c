@@ -6,6 +6,7 @@
 #include "jerryscript-ext/handler.h"
 #include "ztimer.h"
 #include "periph/pm.h"
+#include "thread.h"
 
 #ifndef BENCH_ITERATIONS
 #define BENCH_ITERATIONS 5
@@ -103,6 +104,25 @@ int js_run(const jerry_char_t *script, size_t script_size)
 
         uint32_t execution_time_end = ztimer_now(ZTIMER_USEC);
         printf("%d;", (int) (execution_time_end - execution_time_begin));
+
+#ifdef MEM_STATS
+        printf("\n--- JerryScript Memory Stats ---\n");
+        jerry_heap_stats_t stats;
+        if (jerry_get_memory_stats(&stats)) {
+            printf("peak_allocated_bytes = %zu\n", stats.peak_allocated_bytes);
+            printf("currently_allocated_bytes = %zu\n", stats.allocated_bytes);
+            printf("heap_size = %zu\n", stats.size);
+        }
+        else {
+            printf("Could not retrieve JerryScript memory stats.\n");
+        }
+
+        size_t stack_free = thread_measure_stack_free(thread_get_active());
+        size_t stack_total = THREAD_STACKSIZE_MAIN;
+        printf("riot_peak_stack_used_bytes = %zu\n", stack_total - stack_free);
+
+        printf("--------------------------------\n");
+#endif /* MEM_STATS */
 
         if (jerry_value_is_error(ret_value)) {
             printf("js_run(): Script execution error!\n");
