@@ -33,9 +33,7 @@ SCALE_FACTOR ?= 1
 CFLAGS += -DBENCH_ITERATIONS=$(ITERATIONS)
 HEAP ?= 204800
 
-ifeq ($(strip $(BENCHMARK)),crc_32)
-  CFLAGS += -DLUA_MEM_SIZE=$(HEAP)
-endif
+CFLAGS += -DLUA_MEM_SIZE=$(HEAP)
 
 all: benchmark.lua
 
