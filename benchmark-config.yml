@@ -14,7 +14,7 @@ benchmarks:
 
         - name: lua
           env:
-            HEAP: 204800 # 200 * 1024
+            HEAP: 404800 # 200 * 1024
 
         - name: micropython
           env:
@@ -130,6 +130,39 @@ benchmarks:
           env: 
             HEAP: 16384
             STACK: 8192
+
+    - board_name: adafruit-feather-nrf52840-sense 
+      supported_environments:
+        - name: jerryscript
+        - name: lua
+          disabled: true # -> not enough memory
+        - name: micropython
+        - name: native
+        - name: wamr
+    - board_name: esp32-wroom-32
+      supported_environments:
+        - name: jerryscript
+        - name: lua
+        - name: micropython 
+          disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
+        - name: native
+        - name: wamr
+
+  - name: libud
+    scale_factor: 1785
+    iterations: 5
+    boards:
+    - board_name: native
+      supported_environments:
+        - name: jerryscript
+          env:
+            HEAP: 100
+            STACK: 50
+            PROFILE: es5.1
+        - name: lua
+        - name: micropython
+        - name: native
+        - name: wamr
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
