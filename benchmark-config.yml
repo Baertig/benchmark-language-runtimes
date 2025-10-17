@@ -119,17 +119,17 @@ benchmarks:
 
         - name: lua
           env:
-            HEAP: 2004800 # 200 * 1024
+            HEAP: 2004800
 
         - name: micropython
           env:
-            HEAP: 1428000 # 32 * 1024
+            HEAP: 1428000
 
         - name: native
         - name: wamr
           env: 
-            HEAP: 16384 # 16 * 1024
-            STACK: 8192 # 8 * 1024
+            HEAP: 16384
+            STACK: 8192
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
