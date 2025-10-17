@@ -20,6 +20,7 @@ from rich.panel import Panel
 from rich.live import Live
 from rich.text import Text
 from rich.table import Table
+from rich.markdown import Markdown
 import polars as pl
 
 from config import BenchmarkBoard, Config
@@ -223,8 +224,10 @@ class BenchmarkRunner:
                 f"Warning: Environment directory '{env_name}' does not exist. Skipping.", style="yellow")
             return False
 
-        console.print(
-            f"\n--- Running benchmark '{benchmark.name}' in environment '{env_label}' ---")
+        benchmark_header = Markdown(
+            f"# Running benchmark '{benchmark.name}' in environment '{env_label}'"
+        )
+        console.print(benchmark_header)
 
         try:
             console.print("Building...")
