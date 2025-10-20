@@ -13,7 +13,8 @@ benchmarks:
 
         - name: lua
           env:
-            HEAP: 404800 # 200 * 1024
+            HEAP: 60000 # 200 * 1024
+            GC_AGGRESSIVE: "ON"
 
         - name: micropython
           env:
@@ -55,6 +56,8 @@ benchmarks:
             PROFILE: es5.1
 
         - name: lua
+          env:
+            HEAP: 60000
         - name: micropython
         - name: native
         - name: wamr
@@ -86,6 +89,8 @@ benchmarks:
           env:
             HEAP: 20 #kb
         - name: lua
+          env:
+            HEAP: 95000
         - name: micropython
         - name: native
         - name: wamr
@@ -121,7 +126,7 @@ benchmarks:
 
         - name: lua
           env:
-            HEAP: 2004800
+            HEAP: 1010000
 
         - name: micropython
           env:
@@ -161,6 +166,8 @@ benchmarks:
             HEAP: 7 #kb
             PROFILE: es5.1
         - name: lua
+          env:
+            HEAP: 35000
         - name: micropython
         - name: native
         - name: wamr

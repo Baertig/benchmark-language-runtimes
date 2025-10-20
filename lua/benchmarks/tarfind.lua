@@ -26,7 +26,7 @@ local function new_tar_header()
 end
 
 local function benchmark()
-  sf = SCALE_FACTOR
+  local sf = SCALE_FACTOR
   local found = 0
 
     for _ = 1, sf do

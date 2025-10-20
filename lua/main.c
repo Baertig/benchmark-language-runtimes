@@ -73,6 +73,11 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
         return ENOMEM;
     }
 
+    #ifdef GC_AGGRESSIVE
+    // ref: https://www.lua.org/manual/5.3/manual.html#2.5
+    lua_gc(L, LUA_GCSETPAUSE, 0); // -> "values smaller then 100 mean the gc will not wait before starting a new cycle"
+    #endif
+
     lua_riot_openlibs(L, LUAR_LOAD_BASE);
     lua_riot_openlibs(L, LUAR_LOAD_MATH);
     lua_riot_openlibs(L, LUAR_LOAD_STRING);
@@ -94,6 +99,14 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
         printf("Lua load %s error (%d): %s\n",
                lua_status_name(status), status, msg ? msg : "(non-string error)");
 
+        #ifdef MEM_STATS
+            /* get memory usage */
+            size_t mem_used = get_peak_lua_heap();
+            reset_peak_lua_heap_counter();
+
+            printf("\npeak_allocated_bytes = %zu\n", mem_used);
+        #endif
+
         lua_pop(L, 1);           // pop error message
         lua_riot_close(L);
         return EINTR;
@@ -114,11 +127,28 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
         const char *msg = lua_tostring(L, -1);
         printf("Lua %s runtime error (%d): %s\n",
                lua_status_name(status), status, msg ? msg : "(non-string error)");
+
+        #ifdef MEM_STATS
+            /* get memory usage */
+            size_t mem_used = get_peak_lua_heap();
+            reset_peak_lua_heap_counter();
+
+            printf("\npeak_allocated_bytes = %zu\n", mem_used);
+        #endif
+
         lua_pop(L, 1);           // pop error + traceback
         lua_pop(L, 1);           // pop msghandler
         lua_riot_close(L);
         return EINTR;
     }
+
+#ifdef MEM_STATS
+    /* get memory usage */
+    size_t mem_used = get_peak_lua_heap();
+    reset_peak_lua_heap_counter();
+
+    printf("\npeak_allocated_bytes = %zu\n", mem_used);
+#endif
 
     // Get the return value from the script
     bool correct = false;
