@@ -17,6 +17,10 @@
 #include "ztimer.h"
 #include <stdbool.h>
 
+#ifdef MEM_STATS
+#include "malloc_monitor.h"
+#endif
+
 #ifndef BENCH_ITERATIONS
 #define BENCH_ITERATIONS 5
 #endif
@@ -26,6 +30,10 @@
 int main (void)
 {
   bool correct;
+
+#ifdef MEM_STATS
+  size_t initial_watermark = malloc_monitor_get_usage_high_watermark();
+#endif
 
   ztimer_sleep(ZTIMER_USEC, 2000000); // sleep for 2 seconds, so that a uart connection can be established
 
@@ -54,5 +62,10 @@ int main (void)
 
   printf("=== Benchmark End ===\n");
 
+#ifdef MEM_STATS
+    size_t final_watermark = malloc_monitor_get_usage_high_watermark();
+    printf("mem_usage_high_watermark_bytes:%zu\n", final_watermark - initial_watermark);
+#endif
+
   return (!correct);
-}				
+}
