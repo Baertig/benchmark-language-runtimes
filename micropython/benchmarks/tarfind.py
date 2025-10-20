@@ -1,3 +1,5 @@
+# import micropython
+
 SCALE_FACTOR = 1
 ARCHIVE_FILES = 35
 N_SEARCHES = 5
@@ -62,5 +64,8 @@ def benchmark():
                 if cur.filename == search:
                     found += 1
                     break
+
+        # print("")
+        # micropython.mem_info()
 
     return found == N_SEARCHES

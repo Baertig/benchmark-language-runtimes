@@ -1,3 +1,5 @@
+# import micropython
+
 SCALE_FACTOR = 1
 a = [[0] * 20 for _ in range(20)]
 b = [0] * 20
@@ -77,5 +79,8 @@ def benchmark() -> bool:
             b[i] = w
 
         chkerr = ludcmp(n)
+
+        # print("")
+        # micropython.mem_info()
 
     return verify_benchmark(chkerr)

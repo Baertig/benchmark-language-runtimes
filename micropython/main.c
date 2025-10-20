@@ -10,6 +10,7 @@
 #include "py/nlr.h"
 #include "py/obj.h"
 #include "py/runtime.h"
+#include "py/misc.h"
 
 #include "lib/utils/pyexec.h"
 #include "ztimer.h"

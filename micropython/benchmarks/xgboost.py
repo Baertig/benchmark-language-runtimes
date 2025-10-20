@@ -1,3 +1,5 @@
+# import micropython
+
 SAMPLES_IN_FILE = 128
 SAMPLE_SIZE = 64
 NUM_CLASSES = 10
@@ -202,5 +204,8 @@ def benchmark():
             label = Y_test[i]
             if predicted == label:
                 correct += 1
+
+        # print("")
+        # micropython.mem_info()
 
     return correct >= SAMPLES_IN_FILE * (SCALE_FACTOR // 12)

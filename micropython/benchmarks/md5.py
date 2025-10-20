@@ -1,3 +1,4 @@
+# import micropython
 SCALE_FACTOR = 1
 
 MSG_SIZE = 1000
@@ -116,6 +117,9 @@ def benchmark():
         for i in range(length):
             msg[i] = i & 0xFF
         _md5(msg, length)
+
+        # print("")
+        # micropython.mem_info()
 
     digest = (h0 ^ h1 ^ h2 ^ h3) & MASK32
     return digest == RESULT

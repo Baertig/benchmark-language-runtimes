@@ -1,3 +1,5 @@
+# import micropython
+
 SCALE_FACTOR = 170
 
 crc_32_tab = (
@@ -79,5 +81,8 @@ def benchmark():
     for _ in range(sf):
         srand_beebs(0)
         r = crc32pseudo()
+
+        # print("")
+        # micropython.mem_info()
 
     return (r % 32768) == 11433

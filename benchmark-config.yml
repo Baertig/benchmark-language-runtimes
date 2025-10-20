@@ -13,12 +13,12 @@ benchmarks:
 
         - name: lua
           env:
-            HEAP: 60000 # 200 * 1024
+            HEAP: 60000 
             GC_AGGRESSIVE: "ON"
 
         - name: micropython
           env:
-            HEAP: 32768 # 32 * 1024
+            HEAP: 25000 # 32 * 1024
 
         - name: native
         - name: wamr
@@ -59,6 +59,8 @@ benchmarks:
           env:
             HEAP: 60000
         - name: micropython
+          env:
+            HEAP: 12000 # GC: total: 11904, used: 5312, free: 6592
         - name: native
         - name: wamr
     - board_name: adafruit-feather-nrf52840-sense 
@@ -92,6 +94,9 @@ benchmarks:
           env:
             HEAP: 95000
         - name: micropython
+          env:
+            HEAP: 15000
+
         - name: native
         - name: wamr
 
@@ -130,7 +135,7 @@ benchmarks:
 
         - name: micropython
           env:
-            HEAP: 1428000
+            HEAP: 600000
 
         - name: native
         - name: wamr
@@ -169,6 +174,9 @@ benchmarks:
           env:
             HEAP: 35000
         - name: micropython
+          env:
+            HEAP: 11000
+
         - name: native
         - name: wamr
 
