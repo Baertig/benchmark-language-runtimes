@@ -58,11 +58,15 @@ benchmarks:
         - name: lua
           env:
             HEAP: 60000
+
         - name: micropython
           env:
             HEAP: 12000 # GC: total: 11904, used: 5312, free: 6592
         - name: native
         - name: wamr
+          env:
+            HEAP: 0
+
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
         - name: jerryscript 
@@ -125,23 +129,21 @@ benchmarks:
       supported_environments:
         - name: jerryscript
           env:
-            HEAP: 255 #kb
-            STACK: 50
+            HEAP: 50 #kb
             PROFILE: es5.1
 
         - name: lua
           env:
-            HEAP: 1010000
+            HEAP: 230000
 
         - name: micropython
           env:
-            HEAP: 600000
+            HEAP: 110000
 
         - name: native
         - name: wamr
           env: 
-            HEAP: 16384
-            STACK: 8192
+            HEAP: 0
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
@@ -179,6 +181,8 @@ benchmarks:
 
         - name: native
         - name: wamr
+          env:
+            HEAP: 0
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
