@@ -10,8 +10,10 @@ import argparse
 import csv
 import os
 import re
+import signal
 import subprocess
 import sys
+import time
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
@@ -94,7 +96,8 @@ class BenchmarkRunner:
                 stderr=subprocess.STDOUT,
                 text=True,
                 bufsize=1,
-                universal_newlines=True
+                universal_newlines=True,
+                start_new_session=True,
             )
 
             start_marker = "=== Benchmark Begins ==="
@@ -107,6 +110,8 @@ class BenchmarkRunner:
             command_title = f"Output: {' '.join(command)}"
 
             with Live(Panel("Starting command...", title=command_title), console=console, refresh_per_second=4) as live:
+                pgid = None
+                keyboard_interrupted = False
                 try:
                     # Monitor output line by line
                     while True:
@@ -135,25 +140,64 @@ class BenchmarkRunner:
                             if start_marker in cleaned_line_stripped:
                                 in_benchmark = True
                                 console.print(
-                                    f"[green]Found benchmark start marker[/green]")
+                                    "[green]Found benchmark start marker[/green]"
+                                )
                                 continue
                             elif end_marker in cleaned_line_stripped and in_benchmark:
                                 console.print(
-                                    f"[green]Found benchmark end marker - terminating process[/green]")
+                                    "[green]Found benchmark end marker - terminating process[/green]"
+                                )
                                 # Terminate the process when we find the end marker
                                 process.terminate()
                                 break
                             elif in_benchmark and cleaned_line_stripped:
                                 benchmark_lines.append(cleaned_line_stripped)
 
+                    pgid = os.getpgid(process.pid)
                     # Wait for process to finish and get return code
-                    process.wait(timeout=30)  # Give it some time to clean up
+                    return_code = process.wait(
+                        timeout=30
+                    )  # Give it some time to clean up
+
+                    console.print(f"return_code = {return_code}")
 
                 except subprocess.TimeoutExpired:
                     console.print(
-                        "[yellow]Process cleanup timed out, force killing...[/yellow]")
+                        "[yellow]Process cleanup timed out, force killing...[/yellow]"
+                    )
                     process.kill()
                     process.wait()
+
+                except KeyboardInterrupt:
+                    console.print("Received Keyboard interrupt")
+                    keyboard_interrupted = True
+
+                finally:
+                    if process is not None and pgid is not None:
+                        try:
+                            # This gives pyterm a chance to reset the terminal settings.
+                            os.killpg(pgid, signal.SIGTERM)
+
+                            print("Cleanup: Waiting 2s for polite shutdown...")
+                            time.sleep(2)
+
+                            # 5. Send SIGKILL to the *entire group*
+                            # For a benchmark, it's safest to be aggressive.
+                            # SIGTERM is polite, SIGKILL is guaranteed.
+                            os.killpg(pgid, signal.SIGKILL)
+                            console.print("Process group killed.")
+
+                        except ProcessLookupError:
+                            # This is not an error. It just means the process
+                            # group was already gone when we tried to kill it.
+                            console.print("Process group already gone.")
+
+                        # reap the process
+                        process.wait()
+
+                    if keyboard_interrupted:
+                        console.print("Received keyboard interrupt, Exiting...")
+                        sys.exit(0)
 
             result['returncode'] = process.returncode
             result['stdout'] = '\n'.join(all_output)
