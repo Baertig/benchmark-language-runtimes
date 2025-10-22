@@ -22,6 +22,7 @@ from rich.text import Text
 from rich.table import Table
 from rich.markdown import Markdown
 import polars as pl
+from rich.prompt import Confirm
 
 from config import BenchmarkBoard, Config
 
@@ -262,19 +263,49 @@ class BenchmarkRunner:
                         f"Flash failed for {env_label}", style="bold red")
                     return False
 
+            time.sleep(1)  # sometimes
             # Step 3: Run and capture output with real-time monitoring
-            console.print(
-                "Running benchmark and monitoring output...", style="bold")
-            term_result = self._run_command(
-                ['make', 'term'], str(env_dir), monitor_benchmark=True, env=command_env)
 
-            # Use benchmark data from real-time monitoring
-            benchmark_data = term_result['benchmark_data']
-
-            if not benchmark_data:
+            # Retry loop: re-run terminal and prompt user on failure
+            max_attempts = int(os.environ.get("BENCH_MAX_ATTEMPTS", "3"))
+            attempt = 1
+            benchmark_data = []
+            while attempt <= max_attempts:
                 console.print(
-                    f"No valid benchmark data extracted from {env_label}", style="yellow")
-                return False
+                    f"Running benchmark and monitoring output... (attempt {attempt}/{max_attempts})",
+                    style="bold",
+                )
+
+                term_result = self._run_command(
+                    ["make", "term"],
+                    str(env_dir),
+                    monitor_benchmark=True,
+                    env=command_env,
+                )
+
+                # Use benchmark data from real-time monitoring
+                benchmark_data = term_result.get("benchmark_data", [])
+
+                if benchmark_data:
+                    break
+
+                console.print(
+                    f"No valid benchmark data extracted from {env_label}.",
+                    style="yellow",
+                )
+
+                if attempt >= max_attempts:
+                    # Either reached max attempts or cannot prompt
+                    return False
+
+                retry = Confirm.ask(
+                    "Retry running this benchmark?",
+                    default=True,
+                )
+                if not retry:
+                    return False
+
+                attempt += 1
 
             # Add benchmark name and environment to each row
             for row in benchmark_data:
