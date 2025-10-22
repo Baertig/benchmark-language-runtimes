@@ -270,7 +270,7 @@ function benchmark() {
     }
   }
 
-  return correct == 2;
+  return correct == 2 * sf;
 }
 
 benchmark();

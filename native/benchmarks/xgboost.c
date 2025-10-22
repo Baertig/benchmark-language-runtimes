@@ -129,5 +129,5 @@ int benchmark(void) {
 		}
 	}
 
-    return correct == 2;
+    return correct == 2 * SCALE_FACTOR;
 }

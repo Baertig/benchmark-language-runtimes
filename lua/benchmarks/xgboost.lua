@@ -116,7 +116,7 @@ local function benchmark()
 		end
 	end
 
-	return correct == 2
+	return correct == 2 * SCALE_FACTOR
 end
 
 return benchmark()

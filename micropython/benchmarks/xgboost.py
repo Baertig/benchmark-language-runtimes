@@ -112,4 +112,4 @@ def benchmark():
         # print("")
         # micropython.mem_info()
 
-    return correct == 2
+    return correct == 2 * SCALE_FACTOR
