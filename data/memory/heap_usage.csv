@@ -1,0 +1,6 @@
+Benchmark,Jerryscript - heap,Jerryscript - Usage,Lua - heap,Lua - Usage,Micropython - heap,Micropython - usage,Native - heap,Native - usage,Wamr - heap,Wamr - usage
+crc_32,30712,23736,60000,44656,12000,5312,0,0,0,0
+libud,7160,5296,35000,24357,11000,8480,0,0,0,0
+md5,20472,16992,95000,83882,15000,14528,0,2080,64000,2080
+tarfind,8184,6392,60000,32307,25000,18496,0,8995,64000,8995
+xgboost,51192,49560,230000,216642,110000,85632,0,0,0,0
