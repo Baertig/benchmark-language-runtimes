@@ -29,11 +29,24 @@ benchmarks:
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
         - name: jerryscript
+          env:
+            HEAP: 8 #kb
+            PROFILE: es5.1
+
         - name: lua
-          disabled: true # -> not enough memory
+          env:
+            HEAP: 60000 
+            GC_AGGRESSIVE: "ON"
+
         - name: micropython
+          env:
+            HEAP: 25000 # 32 * 1024
+
         - name: native
         - name: wamr
+          env: 
+            HEAP: 16384 # 16 * 1024
+            STACK: 8192 # 8 * 1024
     - board_name: esp32-wroom-32
       supported_environments:
         - name: jerryscript
@@ -69,12 +82,23 @@ benchmarks:
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
-        - name: jerryscript 
-          disabled: true # -> takes way too long because of the included Int64 library
+        - name: jerryscript
+          disabled: true # takes too long because of Int64 libary
+          env:
+            HEAP: 30
+            PROFILE: es5.1
+
         - name: lua
+          env:
+            HEAP: 60000
+
         - name: micropython
+          env:
+            HEAP: 15000 
         - name: native
         - name: wamr
+          env:
+            HEAP: 0
     - board_name: esp32-wroom-32
       supported_environments:
         - name: jerryscript 
@@ -107,9 +131,15 @@ benchmarks:
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
         - name: jerryscript
+          env:
+            HEAP: 20 #kb
         - name: lua
-          disabled: true # -> not enough memory
+          env:
+            HEAP: 95000
         - name: micropython
+          env:
+            HEAP: 15000
+
         - name: native
         - name: wamr
     - board_name: esp32-wroom-32
@@ -122,7 +152,7 @@ benchmarks:
         - name: wamr
 
   - name: xgboost
-    scale_factor: 1
+    scale_factor: 42
     iterations: 5
     boards:
     - board_name: native
@@ -148,11 +178,22 @@ benchmarks:
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
         - name: jerryscript
+          env:
+            HEAP: 60 #kb
+            PROFILE: es5.1
+
         - name: lua
-          disabled: true # -> not enough memory
+          env:
+            HEAP: 230000
+
         - name: micropython
+          env:
+            HEAP: 110000
+
         - name: native
         - name: wamr
+          env: 
+            HEAP: 0
     - board_name: esp32-wroom-32
       supported_environments:
         - name: jerryscript
@@ -187,11 +228,20 @@ benchmarks:
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
         - name: jerryscript
+          env:
+            HEAP: 7 #kb
+            PROFILE: es5.1
         - name: lua
-          disabled: true # -> not enough memory
+          env:
+            HEAP: 35000
         - name: micropython
+          env:
+            HEAP: 11000
+
         - name: native
         - name: wamr
+          env:
+            HEAP: 0
     - board_name: esp32-wroom-32
       supported_environments:
         - name: jerryscript
