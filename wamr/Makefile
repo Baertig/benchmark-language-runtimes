@@ -14,8 +14,6 @@ USEMODULE += ztimer_usec
 BENCHMARK ?= tarfind
 BENCHMARK_FILE = $(BENCHMARK).c
 
-# Pass the benchmark name to the preprocessor and wasm build
-CFLAGS += -DBENCHMARK=$(BENCHMARK_FILE)
 
 ifeq (,$(filter native native32 native64,$(BOARD)))
 CFLAGS += -DTHREAD_STACKSIZE_MAIN='(6 * 1024)'
@@ -23,6 +21,7 @@ endif
 
 BLOBS += benchmark.wasm
 
+export WAMR_CONFIG=$(realpath ./config.cmake)
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
 # development process:
