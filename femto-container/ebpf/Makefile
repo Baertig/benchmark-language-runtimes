@@ -6,11 +6,8 @@ include $(RIOTBASE)/makefiles/rbpf.inc.mk
 
 .PHONY: all
 
+# Default FILE to ../benchmark (so dump uses ../benchmark.bin by default)
+DUMP_FILE ?= ../benchmark
+
 dump:
-	$(RBPF_GENRBF) dump ../benchmark.bin
-
-dump-crc_32:
-	$(RBPF_GENRBF) dump crc_32.bin
-
-dump-libud:
-	$(RBPF_GENRBF) dump libud.bin
+	$(RBPF_GENRBF) dump $(DUMP_FILE).bin

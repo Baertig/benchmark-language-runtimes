@@ -26,6 +26,8 @@ ifeq ($(BENCHMARK), crc_32)
     BENCHMARK_ID = 1
 else ifeq ($(BENCHMARK), libud)
     BENCHMARK_ID = 2
+else ifeq ($(BENCHMARK), xgboost)
+	BENCHMARK_ID = 3
 else 
 	$(error "Unsupported BENCHMARK: $(BENCHMARK)")
 endif
@@ -40,7 +42,8 @@ all: $(BLOBS)
 benchmark.bin: $(BENCHMARK_FILE)
 	$(MAKE) -C $(CURDIR)/ebpf all
 	cp $(CURDIR)/ebpf/$(BENCHMARK).bin $(CURDIR)/benchmark.bin
-# TODO: Remove 
+# TODO: Remove (currently the makefile from ebpf build all the .c file , However I used different SCALE_FACTOR per benchmark)
+# this means, that I have to recompiler for every run and cannot keep intermediary .bin / .o files
 	rm $(CURDIR)/ebpf/*.bin
 	rm $(CURDIR)/ebpf/*.o
 

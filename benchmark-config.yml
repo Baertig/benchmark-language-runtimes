@@ -25,6 +25,8 @@ benchmarks:
           env: 
             HEAP: 16384 # 16 * 1024
             STACK: 8192 # 8 * 1024
+        - name: femto-container
+          disabled: true # tarfind does dynamic memory allocations 
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
@@ -79,6 +81,7 @@ benchmarks:
         - name: wamr
           env:
             HEAP: 0
+        - name: femto-container
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
@@ -99,6 +102,7 @@ benchmarks:
         - name: wamr
           env:
             HEAP: 0
+        - name: femto-container
     - board_name: esp32-wroom-32
       supported_environments:
         - name: jerryscript 
@@ -108,6 +112,7 @@ benchmarks:
           disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
         - name: native
         - name: wamr
+        - name: femto-container
 
   - name: md5
     scale_factor: 66
@@ -127,6 +132,8 @@ benchmarks:
 
         - name: native
         - name: wamr
+        - name: femto-container
+          disabled: true # md5 uses calloc -> dynamic memory allocations
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
@@ -174,6 +181,7 @@ benchmarks:
         - name: wamr
           env: 
             HEAP: 0
+        - name: femto-container
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
@@ -194,6 +202,8 @@ benchmarks:
         - name: wamr
           env: 
             HEAP: 0
+        - name: femto-container
+
     - board_name: esp32-wroom-32
       supported_environments:
         - name: jerryscript
@@ -202,6 +212,7 @@ benchmarks:
           disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
         - name: native
         - name: wamr
+        - name: femto-container
 
   - name: libud
     scale_factor: 1785
@@ -224,6 +235,7 @@ benchmarks:
         - name: wamr
           env:
             HEAP: 0
+        - name: femto-container
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
@@ -242,6 +254,8 @@ benchmarks:
         - name: wamr
           env:
             HEAP: 0
+        - name: femto-container
+
     - board_name: esp32-wroom-32
       supported_environments:
         - name: jerryscript
@@ -250,3 +264,4 @@ benchmarks:
           disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
         - name: native
         - name: wamr
+        - name: femto-container

@@ -30,6 +30,7 @@ typedef DWORD UNS_32_BITS;
 
 #define crc_32 1
 #define libud 2
+#define xgboost 3
 
 #ifndef BENCHMARK_ID
 #error "BENCHMARK_ID macro must be defined"
@@ -109,6 +110,9 @@ static context ctx = {
     },
     .ffffffff_mask = 0xFFFFFFFF
 };
+
+#elif (BENCHMARK_ID == xgboost)
+#include "external/xgboost.h"
 #endif
 
 #ifndef BENCH_ITERATIONS
@@ -201,7 +205,7 @@ int main(void)
         uint32_t execution_end_us = ztimer_now(ZTIMER_USEC);
         printf("%u;", execution_end_us - execution_start_us);
 
-        printf("%s;\n", BOOL_TO_STR(result));
+        printf("%s\n", BOOL_TO_STR(result));
 
 
         if (res != FC_OK) {
