@@ -12,23 +12,41 @@ RIOTBASE ?= $(CURDIR)/../RIOT
 # development process:
 DEVELHELP ?= 1
 
+USEMODULE += ztimer_usec
 USEPKG += femto-container
 
 BENCHMARK ?= crc_32
-BENCHMARK_FILE = $(BENCHMARK).c
+BENCHMARK_FILE = $(CURDIR)/ebpf/$(BENCHMARK).c
+ITERATIONS ?= 1
 
-BLOBS += ebpf/$(BENCHMARK).bin
+BLOBS += benchmark.bin
+export SCALE_FACTOR ?= 1
 
-CFLAGS += -DFEMTO_CONTAINER_BRANCHES_ALLOWED=2000000
+ifeq ($(BENCHMARK), crc_32)
+    BENCHMARK_ID = 1
+else ifeq ($(BENCHMARK), libud)
+    BENCHMARK_ID = 2
+else 
+	$(error "Unsupported BENCHMARK: $(BENCHMARK)")
+endif
+
+CFLAGS += -DFEMTO_CONTAINER_BRANCHES_ALLOWED=2000000 
+CFLAGS += -DBENCHMARK_ID=$(BENCHMARK_ID)
+CFLAGS += -DBENCH_ITERATIONS=$(ITERATIONS)
 
 all: $(BLOBS)
 
-ebpf/%.bin: ebpf/%.c ebpf/%.o
-	$(MAKE) -C ebpf all
+.PHONY: benchmark.bin
+benchmark.bin: $(BENCHMARK_FILE)
+	$(MAKE) -C $(CURDIR)/ebpf all
+	cp $(CURDIR)/ebpf/$(BENCHMARK).bin $(CURDIR)/benchmark.bin
+# TODO: Remove 
+	rm $(CURDIR)/ebpf/*.bin
+	rm $(CURDIR)/ebpf/*.o
 
 .PHONY: clean-ebpf
 clean-ebpf:
-	$(MAKE) -C ebpf clean
+	$(MAKE) -C $(CURDIR)/ebpf clean
 
 clean: clean-ebpf
 

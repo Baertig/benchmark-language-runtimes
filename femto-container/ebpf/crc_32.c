@@ -1,6 +1,10 @@
+#include <stdint.h>
+#include <helpers.h>
 // /* This scale factor will be changed to equalise the runtime of the
 //    benchmarks. */
-#define LOCAL_SCALE_FACTOR 170
+#ifndef SCALE_FACTOR
+#define SCALE_FACTOR 1
+#endif
 
 // /**********************************************************************\
 //   |* Demonstration program to compute the 32-bit CRC used as the frame  *|
@@ -18,14 +22,18 @@
 typedef unsigned char BYTE;
 typedef unsigned long DWORD;
 typedef unsigned short WORD;
+typedef DWORD UNS_32_BITS;
 
-#include <stdint.h>
+typedef struct {
+    UNS_32_BITS crc_table[256];
+    DWORD ffffffff_mask;
+} context;
+
 
 #define UPDC32(tab,octet,crc) (tab[((crc)^((BYTE)octet)) & 0xff] ^ ((crc) >> 8))
 
 // /* Need an unsigned type capable of holding 32 bits; */
 
-typedef DWORD UNS_32_BITS;
 
 // /* Copyright (C) 1986 Gary S. Brown.  You may use this program, or
 //    code or tables extracted from it, as desired without restriction.*/
@@ -90,12 +98,12 @@ void inline srand_beebs (unsigned int new_seed)
   seed = (long int) new_seed;
 }
 
-DWORD inline crc32pseudo (UNS_32_BITS *tab)
+DWORD inline crc32pseudo (UNS_32_BITS *tab, DWORD ffffffff_mask)
 {
   int i;
   register DWORD oldcrc32;
 
-  oldcrc32 = 0xFFFFFFFF;
+  oldcrc32 = ffffffff_mask;
 
   for (i = 0; i < 1024; ++i)
     {
@@ -105,38 +113,20 @@ DWORD inline crc32pseudo (UNS_32_BITS *tab)
   return ~oldcrc32;
 }
 
-int benchmark (UNS_32_BITS *tab)
+int benchmark (context *ctx)
 {
-  unsigned int lsf = LOCAL_SCALE_FACTOR;
-  unsigned int gsf = GLOBAL_SCALE_FACTOR;
+  UNS_32_BITS *tab = ctx->crc_table;
+  DWORD ffffffff_mask = ctx->ffffffff_mask;
+
+  unsigned int sf = SCALE_FACTOR;
   int i;
   DWORD r;
 
-  for (unsigned int lsf_cnt = 0; lsf_cnt < lsf; lsf_cnt++)
-    for (unsigned int gsf_cnt = 0; gsf_cnt < gsf; gsf_cnt++) {
-        srand_beebs(0);
-        r = crc32pseudo(tab);
-      
-      }
+
+  for (unsigned int sf_cnt = 0; sf_cnt < sf; sf_cnt++) {
+    srand_beebs(0);
+    r = crc32pseudo(tab, ffffffff_mask);
+  }
 
   return (int) (r % 32768) == 11433;
-
-  // srand_beebs(0);
-
-  // volatile DWORD init_crc_32 = 0x7FFFFFFF;
-  // init_crc_32 = (init_crc_32 << 1) + 1;
-
-  // register DWORD oldcrc32 = 0xFFFFFFFF;
-  // DWORD tab_value = 0;
-  // int rand = 0;
-  // DWORD shifted = 0;
-  // for (i = 0; i < 4; i++) {
-  //   rand = rand_beebs();
-  //   tab_value = tab[((oldcrc32)^((BYTE)rand)) & 0xff];
-  //   shifted = oldcrc32 >> 8;
-
-  //   oldcrc32 = UPDC32(tab, rand, oldcrc32);
-  // }
-
-  // return shifted;
 }

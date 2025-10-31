@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "ztimer.h"
 
 #include "femtocontainer/femtocontainer.h"
 #include "femtocontainer/builtin_shared.h"
@@ -19,6 +20,9 @@
 #include "femtocontainer/config.h"
 
 typedef int dont_be_pedantic;
+
+extern uint32_t load_program_start_us;
+extern uint32_t execution_start_us;
 
 static int _check_mem(const f12r_t *femtoc, uint8_t size, const intptr_t addr, uint8_t type)
 {
@@ -169,6 +173,11 @@ int f12r_run(f12r_t *femtoc, const void *ctx, int64_t *result)
     if (res < 0) {
         return res;
     }
+
+    uint32_t load_program_end_us = ztimer_now(ZTIMER_USEC);
+    printf("%u;", load_program_end_us - load_program_start_us);
+
+    execution_start_us = ztimer_now(ZTIMER_USEC);
 
     /* Create an instruction jumptable with calculated addresses for the goto */
     static const void * const _jumptable[256] = {
