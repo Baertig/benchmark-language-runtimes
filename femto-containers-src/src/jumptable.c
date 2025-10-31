@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 
 #include "femtocontainer/femtocontainer.h"
@@ -209,6 +210,7 @@ int f12r_run(f12r_t *femtoc, const void *ctx, int64_t *result)
 
 
         [0x85] = &&OPCODE_CALL,
+        [0x87] = &&ALU64_NEG_REG,
         [0x95] = &&OPCODE_RETURN,
     };
 
@@ -421,6 +423,9 @@ OPCODE_RETURN:
     goto exit;
 
 invalid_instruction:
+    printf("Femto-Container: invalid instruction 0x%02x at offset %ld\n",
+           instr->opcode,
+           (long)((uintptr_t)instr - (uintptr_t)f12r_text(femtoc)));
     res = FC_ILLEGAL_INSTRUCTION;
     goto exit;
 
