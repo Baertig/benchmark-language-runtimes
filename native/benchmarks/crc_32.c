@@ -171,23 +171,6 @@ benchmark (void)
     r = crc32pseudo();
   }
 
-  srand_beebs(0);
-  register DWORD oldcrc32 = 0xFFFFFFFF;
-  DWORD tab_value = 0;
-  int rand = 0;
-  DWORD shifted = 0;
-  for (i = 0; i < 1; i++) {
-    rand = rand_beebs();
-    tab_value = crc_32_tab[((oldcrc32)^((BYTE)rand)) & 0xff];
-    shifted = oldcrc32 >> 8;
-
-    oldcrc32 = UPDC32(rand, oldcrc32);
-  }
-
-  printf("oldcrc32 = %d \n", oldcrc32);
-  printf("shifted = %d \n", shifted);
-  printf("tab_value = %d \n", tab_value);
-  printf("rand = %d \n", rand);
 
   return (int) (r % 32768) == 11433;
 }
