@@ -40,7 +40,7 @@ all: $(BLOBS)
 
 .PHONY: benchmark.bin
 benchmark.bin: $(BENCHMARK_FILE)
-	$(MAKE) -C $(CURDIR)/ebpf all
+	$(MAKE) -C $(CURDIR)/ebpf all RBPF_SOURCES=$(BENCHMARK_FILE)
 	cp $(CURDIR)/ebpf/$(BENCHMARK).bin $(CURDIR)/benchmark.bin
 # TODO: Remove (currently the makefile from ebpf build all the .c file , However I used different SCALE_FACTOR per benchmark)
 # this means, that I have to recompiler for every run and cannot keep intermediary .bin / .o files
