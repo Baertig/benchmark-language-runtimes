@@ -4,3 +4,9 @@
 [submodule "external/micropython"]
 	path = external/micropython
 	url = https://github.com/kaspar030/micropython
+[submodule "external/vm"]
+	path = external/vm
+	url = https://github.com/SzymonKubica/rbpf-for-microcontrollers
+[submodule "external/tools"]
+	path = external/tools
+	url = https://github.com/SzymonKubica/micro-bpf-tools
