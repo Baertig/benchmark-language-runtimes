@@ -25,7 +25,7 @@
 #define BENCH_ITERATIONS 5
 #endif
 
-#define BOOL_TO_STR(x) ((x) ? "True" : "False")
+#define BOOL_TO_STR(x) ((x) ? "true" : "false")
 
 int main (void)
 {

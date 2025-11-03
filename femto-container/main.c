@@ -119,7 +119,7 @@ static context ctx = {
 #define BENCH_ITERATIONS 5
 #endif
 
-#define BOOL_TO_STR(x) ((x) ? "True" : "False")
+#define BOOL_TO_STR(x) ((x) ? "true" : "false")
 
 uint32_t load_program_start_us;
 uint32_t execution_start_us;

@@ -22,7 +22,7 @@
 #define BENCH_ITERATIONS 5
 #endif
 
-#define BOOL_TO_STR(x) ((x) ? "True" : "False")
+#define BOOL_TO_STR(x) ((x) ? "true" : "false")
 
 static char mp_heap[MP_RIOT_HEAPSIZE];
 

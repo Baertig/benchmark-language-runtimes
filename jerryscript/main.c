@@ -12,7 +12,7 @@
 #define BENCH_ITERATIONS 5
 #endif
 
-#define BOOL_TO_STR(x) ((x) ? "True" : "False")
+#define BOOL_TO_STR(x) ((x) ? "true" : "false")
 
 /* Include header generated from the benchmark file */
 #include "blob/benchmark.js.h"

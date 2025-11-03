@@ -31,7 +31,7 @@
 #define BENCH_ITERATIONS 5
 #endif
 
-#define BOOL_TO_STR(x) ((x) ? "True" : "False")
+#define BOOL_TO_STR(x) ((x) ? "true" : "false")
 
 #ifndef LUA_MEM_SIZE
 #define LUA_MEM_SIZE (350 * 1024)

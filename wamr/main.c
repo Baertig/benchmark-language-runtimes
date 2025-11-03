@@ -28,7 +28,7 @@ int wamr_run_cp(const void *bytecode, size_t bytecode_len, int argc, const char 
 #define BENCH_ITERATIONS 5
 #endif
 
-#define BOOL_TO_STR(x) ((x) ? "True" : "False")
+#define BOOL_TO_STR(x) ((x) ? "true" : "false")
 
 int main(void)
 {
