@@ -39,16 +39,19 @@ struct Context {
     y: [i64; 100],
 }
 
+const ITERATIONS_STR: &str = env!("ITERATIONS");
+
 fn main() {
     let prog = include_bytes!("../benchmark.bin");
     println!("Hello Rust!");
     let micro_sec = Clock::usec();
+    let iterations: usize = ITERATIONS_STR.parse().expect("Failed to parse ITERATIONS");
 
     println!("=== Benchmark Begins ===");
     println!("iteration;init_runtime_us;load_program_us;execution_time_us;correct");
-    // 5 iterations
-    for iteration in 0..5 {
-        print!("{};", iteration);
+
+    for i in 0..iterations {
+        print!("{};", i);
         print!("0;"); // init runtime not applicable here
 
         let mut vm: Option<EbpfVmMbuff> = None;

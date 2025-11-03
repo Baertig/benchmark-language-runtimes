@@ -29,6 +29,8 @@ FEATURES_REQUIRED += rust_target
 
 BENCHMARK ?= crc_32
 BENCHMARK_FILE = $(CURDIR)/ebpf/$(BENCHMARK).c
+ITERATIONS ?= 5
+export ITERATIONS
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
