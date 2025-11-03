@@ -79,6 +79,7 @@ fn main() {
                         .expect("failed to load program"),
                 );
                 register_all(vm.as_mut().unwrap());
+                vm.as_ref().unwrap().verify_loaded_program().expect("program verification failed");
             })
             .expect("failed to measure load program time");
 
