@@ -4,6 +4,7 @@
 
 #include "jerryscript.h"
 #include "jerryscript-ext/handler.h"
+#include "jerryscript-port-default.h"
 #include "ztimer.h"
 #include "periph/pm.h"
 #include "thread.h"
@@ -77,10 +78,16 @@ int js_run(const jerry_char_t *script, size_t script_size)
     /* Initialize engine, no flags, default configuration */
 
     uint32_t init_runtime_begin = ztimer_now(ZTIMER_USEC);
-    jerry_init(JERRY_INIT_EMPTY);
+    jerry_init_flag_t init_flags = JERRY_INIT_EMPTY;
+
+#ifdef DUMP_BYTECODE
+    init_flags |= JERRY_INIT_SHOW_OPCODES;
+    jerry_port_default_set_log_level(JERRY_LOG_LEVEL_DEBUG);
+#endif
+
+    jerry_init(init_flags);
 
     /* Register the print function in the global object. */
-
     jerryx_handler_register_global((const jerry_char_t *) "print",
                                    jerryx_handler_print);
 
@@ -155,6 +162,7 @@ int js_run(const jerry_char_t *script, size_t script_size)
 int main(void)
 {
     ztimer_sleep(ZTIMER_USEC, 3000000);
+    vfprintf(stderr, "\n vprintf test \n", NULL);
     printf("=== Benchmark Begins ===\n");
     printf("iteration;init_runtime_us;load_program_us;execution_time_us;correct\n");
 

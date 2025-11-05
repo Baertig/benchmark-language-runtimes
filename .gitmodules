@@ -10,3 +10,6 @@
 [submodule "external/tools"]
 	path = external/tools
 	url = https://github.com/SzymonKubica/micro-bpf-tools
+[submodule "external/jerryscript"]
+	path = external/jerryscript
+	url = https://github.com/jerryscript-project/jerryscript.git

@@ -22,16 +22,22 @@ STACK ?= 5 #KiB
 PROFILE ?= es5.1 # need for the Math module
 MEM_STATS ?= OFF
 ERROR_MESSAGES ?= ON
+DUMP_BYTECODE ?= OFF
 
 export JERRY_HEAP = $(HEAP) 
 export JERRY_STACK = $(STACK) 
 export JERRY_PROFILE = $(PROFILE)
 export JERRY_MEM_STATS = $(MEM_STATS)
 export JERRY_ERROR_MESSAGES = $(ERROR_MESSAGES)
+export JERRY_PARSER_DUMP_BYTE_CODE = $(DUMP_BYTECODE)
 
 ifeq ($(MEM_STATS),ON)
 DEVELHELP = 1
 CFLAGS += -DMEM_STATS
+endif
+
+ifeq ($(DUMP_BYTECODE),ON)
+CFLAGS += -DDUMP_BYTECODE
 endif
 
 # Add the package for Jerryscript
@@ -62,9 +68,9 @@ benchmark.js: .FORCE
 
 # rebuild jerryscript if config does not match
 check_config: .FORCE
-	@if [ ! -f .jerry_config ] || [ "$$(cat .jerry_config)" != "$(HEAP);$(STACK);$(PROFILE);$(MEM_STATS);$(ERROR_MESSAGES)" ]; then \
-		echo "$(HEAP);$(STACK);$(PROFILE);$(MEM_STATS);$(ERROR_MESSAGES)" > .jerry_config; \
-		$(MAKE) clean-pkg; \
+	@if [ ! -f .jerry_config ] || [ "$$(cat .jerry_config)" != "$(HEAP);$(STACK);$(PROFILE);$(MEM_STATS);$(ERROR_MESSAGES);$(DUMP_BYTECODE)" ]; then \
+		echo "$(HEAP);$(STACK);$(PROFILE);$(MEM_STATS);$(ERROR_MESSAGES);$(DUMP_BYTECODE)" > .jerry_config; \
+		$(MAKE) clean; \
 	fi
 
 callgrind: all-valgrind
