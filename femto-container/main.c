@@ -59,7 +59,6 @@ static context ctx = {
 #elif (BENCHMARK_ID == crc_32)
 typedef struct {
     UNS_32_BITS crc_table[256];
-    DWORD ffffffff_mask;
 } context;
 
 static context ctx = {
@@ -108,7 +107,6 @@ static context ctx = {
         0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
         0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
     },
-    .ffffffff_mask = 0xFFFFFFFF
 };
 
 #elif (BENCHMARK_ID == xgboost)
@@ -196,14 +194,14 @@ int main(void)
         f12r_add_region(&f12r_container, &region, &ctx, sizeof(context), FC_MEM_REGION_READ | FC_MEM_REGION_WRITE);
         
         uint32_t init_runtime_end_us = ztimer_now(ZTIMER_USEC);
-        printf("%lu;", init_runtime_end_us - init_runtime_start_us);
+        printf("%d;", (int)init_runtime_end_us - init_runtime_start_us);
 
         load_program_start_us = ztimer_now(ZTIMER_USEC);
 
         int res = f12r_execute_ctx(&f12r_container, &ctx, sizeof(context), &result);
 
         uint32_t execution_end_us = ztimer_now(ZTIMER_USEC);
-        printf("%lu;", execution_end_us - execution_start_us);
+        printf("%d;", (int) execution_end_us - execution_start_us);
 
         printf("%s\n", BOOL_TO_STR(result));
 

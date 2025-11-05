@@ -4,6 +4,8 @@
 #define SCALE_FACTOR 1
 #endif
 
+#include <stdint.h>  
+
 /**********************************************************************\
   |* Demonstration program to compute the 32-bit CRC used as the frame  *|
   |* check sequence in ADCCP (ANSI X3.66, also known as FIPS PUB 71     *|
@@ -18,8 +20,8 @@
 
 /* Some basic types.  */
 typedef unsigned char BYTE;
-typedef unsigned long DWORD;
-typedef unsigned short WORD;
+typedef uint32_t DWORD;
+typedef uint16_t WORD;
 
 #include <stdio.h>
 
@@ -124,26 +126,22 @@ static const UNS_32_BITS crc_32_tab[] = {	/* CRC polynomial 0xedb88320 */
   0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-static unsigned long int seed = 0;
+static unsigned int seed = 0;
 
-int rand_beebs (void)
-{
+int rand_beebs (void) {
   seed = (seed * 1103515245UL + 12345UL);
   seed = seed & ((1UL << 31) - 1UL);
   return (int) (seed >> 16);
 }
 
 
-void srand_beebs (unsigned int new_seed)
-{
-  seed = (long int) new_seed;
+void srand_beebs (unsigned int new_seed) {
+  seed = (int) new_seed;
 }
 
 
 
-DWORD
-crc32pseudo ()
-{
+DWORD crc32pseudo () {
   int i;
   register DWORD oldcrc32;
 
@@ -159,9 +157,7 @@ crc32pseudo ()
 
 
 
-int
-benchmark (void)
-{
+int benchmark (void) {
   unsigned int sf = SCALE_FACTOR;
   int i;
   DWORD r;

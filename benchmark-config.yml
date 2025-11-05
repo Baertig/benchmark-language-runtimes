@@ -90,9 +90,9 @@ benchmarks:
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
         - name: jerryscript
-          disabled: true # takes too long because of Int64 libary
           env:
             HEAP: 30
+            # STACK: 10 ? 
             PROFILE: es5.1
 
         - name: lua

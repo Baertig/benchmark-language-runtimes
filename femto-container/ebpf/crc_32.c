@@ -98,12 +98,12 @@ void inline srand_beebs (unsigned int new_seed)
   seed = (long int) new_seed;
 }
 
-DWORD inline crc32pseudo (UNS_32_BITS *tab, DWORD ffffffff_mask)
+DWORD inline crc32pseudo (UNS_32_BITS *tab)
 {
   int i;
   register DWORD oldcrc32;
 
-  oldcrc32 = ffffffff_mask;
+  oldcrc32 = 0xffffffff;;
 
   for (i = 0; i < 1024; ++i)
     {
@@ -116,7 +116,6 @@ DWORD inline crc32pseudo (UNS_32_BITS *tab, DWORD ffffffff_mask)
 int benchmark (context *ctx)
 {
   UNS_32_BITS *tab = ctx->crc_table;
-  DWORD ffffffff_mask = ctx->ffffffff_mask;
 
   unsigned int sf = SCALE_FACTOR;
   int i;
@@ -125,7 +124,7 @@ int benchmark (context *ctx)
 
   for (unsigned int sf_cnt = 0; sf_cnt < sf; sf_cnt++) {
     srand_beebs(0);
-    r = crc32pseudo(tab, ffffffff_mask);
+    r = crc32pseudo(tab);
   }
 
   return (int) (r % 32768) == 11433;

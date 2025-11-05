@@ -175,7 +175,7 @@ int f12r_run(f12r_t *femtoc, const void *ctx, int64_t *result)
     }
 
     uint32_t load_program_end_us = ztimer_now(ZTIMER_USEC);
-    printf("%lu;", load_program_end_us - load_program_start_us);
+    printf("%d;", (int) load_program_end_us - load_program_start_us);
 
     execution_start_us = ztimer_now(ZTIMER_USEC);
 
@@ -355,8 +355,8 @@ ALU32_ARSH_IMM:
 #endif
 
 MEM_LDDW_IMM:
-    DST = (uint64_t)instr->immediate;
-    DST |= ((uint64_t)((instr+1)->immediate)) << 32;
+    DST = (uint64_t) (uint32_t) (instr->immediate);
+    DST |= ((uint64_t) (uint32_t) ((instr+1)->immediate)) << 32;
     instr++;
     CONT;
 
