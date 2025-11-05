@@ -175,7 +175,7 @@ int f12r_run(f12r_t *femtoc, const void *ctx, int64_t *result)
     }
 
     uint32_t load_program_end_us = ztimer_now(ZTIMER_USEC);
-    printf("%u;", load_program_end_us - load_program_start_us);
+    printf("%lu;", load_program_end_us - load_program_start_us);
 
     execution_start_us = ztimer_now(ZTIMER_USEC);
 

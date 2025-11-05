@@ -28,6 +28,9 @@ benchmarks:
         - name: femto-container
           disabled: true # tarfind does dynamic memory allocations 
 
+        - name: micro-bpf
+          disabled: true # tarfind does dynamic memory allocations 
+
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
         - name: jerryscript
@@ -82,6 +85,7 @@ benchmarks:
           env:
             HEAP: 0
         - name: femto-container
+        - name: micro-bpf
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
@@ -103,6 +107,8 @@ benchmarks:
           env:
             HEAP: 0
         - name: femto-container
+        - name: micro-bpf
+
     - board_name: esp32-wroom-32
       supported_environments:
         - name: jerryscript 
@@ -113,6 +119,7 @@ benchmarks:
         - name: native
         - name: wamr
         - name: femto-container
+        - name: micro-bpf
 
   - name: md5
     scale_factor: 66
@@ -133,6 +140,8 @@ benchmarks:
         - name: native
         - name: wamr
         - name: femto-container
+          disabled: true # md5 uses calloc -> dynamic memory allocations
+        - name: micro-bpf
           disabled: true # md5 uses calloc -> dynamic memory allocations
 
     - board_name: adafruit-feather-nrf52840-sense 
@@ -182,6 +191,7 @@ benchmarks:
           env: 
             HEAP: 0
         - name: femto-container
+        - name: micro-bpf
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
@@ -203,6 +213,7 @@ benchmarks:
           env: 
             HEAP: 0
         - name: femto-container
+        - name: micro-bpf
 
     - board_name: esp32-wroom-32
       supported_environments:
@@ -213,6 +224,7 @@ benchmarks:
         - name: native
         - name: wamr
         - name: femto-container
+        - name: micro-bpf
 
   - name: libud
     scale_factor: 1785
@@ -236,6 +248,7 @@ benchmarks:
           env:
             HEAP: 0
         - name: femto-container
+        - name: micro-bpf
 
     - board_name: adafruit-feather-nrf52840-sense 
       supported_environments:
@@ -255,6 +268,7 @@ benchmarks:
           env:
             HEAP: 0
         - name: femto-container
+        - name: micro-bpf
 
     - board_name: esp32-wroom-32
       supported_environments:
@@ -265,3 +279,4 @@ benchmarks:
         - name: native
         - name: wamr
         - name: femto-container
+        - name: micro-bpf

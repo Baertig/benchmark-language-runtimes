@@ -118,14 +118,8 @@ static inline uint8_t predict(const uint8_t *x) {
     return class_idx;
 }
 
-typedef struct {
-    long a[20][20];  // Changed to signed long
-    long b[20];      // Changed to signed long
-    long x[20];      // Changed to signed long
-    long y[100];     // Changed to signed long
-} context;
 
-int benchmark(context *ctx) {
+int benchmark() {
     // Run inference with all samples specified in xgboost.c
     unsigned int sf = SCALE_FACTOR;
     size_t correct = 0;

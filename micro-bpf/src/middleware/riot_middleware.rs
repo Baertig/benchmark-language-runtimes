@@ -72,7 +72,7 @@ pub fn bpf_printf(fmt: u64, a1: u64, a2: u64, a3: u64, a4: u64) -> u64 {
     }
     unsafe {
         printf(
-            CStr::from_ptr(fmt as *const i8).as_ptr() as *const c_char,
+            CStr::from_ptr(fmt as *const c_char).as_ptr() as *const c_char,
             a1 as u32,
             a2 as u32,
             a3 as u32,

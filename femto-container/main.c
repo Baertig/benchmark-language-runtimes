@@ -196,14 +196,14 @@ int main(void)
         f12r_add_region(&f12r_container, &region, &ctx, sizeof(context), FC_MEM_REGION_READ | FC_MEM_REGION_WRITE);
         
         uint32_t init_runtime_end_us = ztimer_now(ZTIMER_USEC);
-        printf("%u;", init_runtime_end_us - init_runtime_start_us);
+        printf("%lu;", init_runtime_end_us - init_runtime_start_us);
 
         load_program_start_us = ztimer_now(ZTIMER_USEC);
 
         int res = f12r_execute_ctx(&f12r_container, &ctx, sizeof(context), &result);
 
         uint32_t execution_end_us = ztimer_now(ZTIMER_USEC);
-        printf("%u;", execution_end_us - execution_start_us);
+        printf("%lu;", execution_end_us - execution_start_us);
 
         printf("%s\n", BOOL_TO_STR(result));
 
