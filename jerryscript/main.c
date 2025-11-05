@@ -18,6 +18,11 @@
 /* Include header generated from the benchmark file */
 #include "blob/benchmark.js.h"
 
+#if DUMP_BYTECODE
+int print_get_type_freq(void); // defined in vm.c
+int print_oc_type_freq(void); // defined in vm.c
+#endif
+
 void print_jerry_error(jerry_value_t error_value, const char* error_context)
 {
     /* Get error details */
@@ -130,6 +135,11 @@ int js_run(const jerry_char_t *script, size_t script_size)
 
         printf("--------------------------------\n");
 #endif /* MEM_STATS */
+
+#if DUMP_BYTECODE
+        print_get_type_freq();
+        print_oc_type_freq();
+#endif /* DUMP_BYTECODE */
 
         if (jerry_value_is_error(ret_value)) {
             printf("js_run(): Script execution error!\n");
