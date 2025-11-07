@@ -21,6 +21,9 @@ endif
 
 BLOBS += benchmark.wasm
 
+# to enable: "DWASM_ENABLE_OPCODE_COUNTER=1"
+# go there RIOT/build/pkg/wamr/core/config.h:295
+
 export WAMR_CONFIG=$(realpath ./config.cmake)
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
