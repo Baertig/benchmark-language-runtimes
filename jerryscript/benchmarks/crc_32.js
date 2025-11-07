@@ -1,7 +1,6 @@
 var SCALE_FACTOR = 1;
 
-// CRC table (256 entries) — polynomial 0xEDB88320
-var crc_32_tab = [
+var crc_32_tab = new Uint32Array([
   0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f,
   0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988,
   0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91, 0x1db71064, 0x6ab020f2,
@@ -45,41 +44,16 @@ var crc_32_tab = [
   0xbdbdf21c, 0xcabac28a, 0x53b39330, 0x24b4a3a6, 0xbad03605, 0xcdd70693,
   0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
   0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d,
-];
+]);
 
-var seed = 0;
-
-function mul32(a, b) {
-  a = a >>> 0; // Ensure unsigned 32-bit
-  b = b >>> 0;
-  var a0 = a & 0xffff;
-  var a1 = a >>> 16;
-  var b0 = b & 0xffff;
-  var b1 = b >>> 16;
-  var p00 = a0 * b0;
-  var p01 = a0 * b1;
-  var p10 = a1 * b0;
-  var p11 = a1 * b1;
-  var mid = (p01 + p10) * 0x10000 + p00;
-  var low = mid & 0xffffffff;
-  if (low < 0) low += 0x100000000;
-  return low;
-}
-
-function add32(a, b) {
-  var sum = a + b;
-  var low = sum & 0xffffffff;
-  if (low < 0) low += 0x100000000;
-  return low;
-}
+var seed = 0n;
 
 function rand_beebs() {
   //   seed = (seed * 1103515245 + 12345) & ((1<<31)-1) in 32-bit arithmetic
-  seed = add32(mul32(seed, 1103515245), 12345);
-  // print("seed = " + seed);
-  seed &= 0x7fffffff;
-  // print("seed after and = " + seed);
-  return seed >>> 16;
+  seed *= 1103515245n;
+  seed += 12345n;
+  seed &= 0x7fffffffn;
+  return Number(seed) >>> 16;
 }
 
 function UPDC32(octet, crc) {
@@ -91,7 +65,6 @@ function crc32pseudo() {
   var oldcrc32 = 0xffffffff;
   for (var i = 0; i < 1024; ++i) {
     oldcrc32 = UPDC32(rand_beebs(), oldcrc32);
-    // print("oldcrc32 = " + oldcrc32);
   }
   return ~oldcrc32 & 0xffffffff;
 }
@@ -101,7 +74,7 @@ function benchmark() {
   var r = 0;
 
   for (var g = 0; g < sf; g++) {
-    seed = 0;
+    seed[0] = 0;
     r = crc32pseudo();
   }
 

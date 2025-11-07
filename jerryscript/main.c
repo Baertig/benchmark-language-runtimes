@@ -137,6 +137,7 @@ int js_run(const jerry_char_t *script, size_t script_size)
 #endif /* MEM_STATS */
 
 #if DUMP_BYTECODE
+        printf("\n--- Bytecode Execution Stats ---\n");
         print_get_type_freq();
         print_oc_type_freq();
 #endif /* DUMP_BYTECODE */
@@ -171,7 +172,6 @@ int js_run(const jerry_char_t *script, size_t script_size)
 
 int main(void)
 {
-    vfprintf(stderr, "\n vprintf test \n", NULL);
     ztimer_init();
     printf("=== Benchmark Begins ===\n");
     printf("iteration;init_runtime_us;load_program_us;execution_time_us;correct\n");
