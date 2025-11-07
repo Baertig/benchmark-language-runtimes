@@ -57,7 +57,7 @@ local function rand_beebs()
 	-- seed = (seed * 1103515245 + 12345) & ((1<<31)-1)
 	seed = ( (seed * 1103515245) + 12345 ) & 0xffffffff
 	seed = seed & 0x7fffffff
-	return (seed >> 16) & 0xffff -- 0..32767
+	return (seed >> 16)
 end
 
 -- Update CRC helper

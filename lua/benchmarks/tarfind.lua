@@ -6,8 +6,9 @@ local function gen_random_filename(length)
   -- Random uppercase A-Z string of given length (but using the RNG above)
   local t = {}
   for i = 1, length do
-    t[i] = string.char((math.random(0,25)) + 65)
+    t[i] = string.char(math.random(65, 90))
   end
+
   return table.concat(t)
 end
 
