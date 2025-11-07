@@ -19,9 +19,9 @@
 //   \**********************************************************************/
 
 // /* Some basic types.  */
-typedef unsigned char BYTE;
-typedef unsigned long DWORD;
-typedef unsigned short WORD;
+typedef uint8_t BYTE;
+typedef uint32_t DWORD;
+typedef uint16_t WORD;
 typedef DWORD UNS_32_BITS;
 
 typedef struct {

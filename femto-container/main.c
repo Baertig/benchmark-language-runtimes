@@ -25,8 +25,7 @@
 #include "femtocontainer/shared.h"
 #include "blob/benchmark.bin.h"
 
-typedef unsigned long DWORD;
-typedef DWORD UNS_32_BITS;
+
 
 #define crc_32 1
 #define libud 2
@@ -38,11 +37,11 @@ typedef DWORD UNS_32_BITS;
 
 #if (BENCHMARK_ID == libud)
 typedef struct {
-    unsigned long int a[20][20];
-    unsigned long int b[20];
-    unsigned long int x[20];
-    unsigned long int y[100];
-    unsigned long int x_ref[20];
+    int32_t a[20][20];
+    int32_t b[20];
+    int32_t x[20];
+    int32_t y[100];
+    int32_t x_ref[20];
     // char msg[100];
 } context;
 
@@ -51,12 +50,15 @@ static context ctx = {
     .b = {0},  
     .x = {0},  
     .y = {0},  
-    .x_ref = { 0UL, 0UL, 1UL, 1UL, 1UL, 2UL, 0UL, 0UL, 0UL, 0UL,
-               0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL } 
-    // .msg 
+    .x_ref = { 0, 0, 1, 1, 1, 2, 0, 0, 0, 0,
+               0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    // .msg = "Index %zu: p1 = %u, p2 = %u\n"
 };
 
 #elif (BENCHMARK_ID == crc_32)
+
+typedef uint32_t DWORD;
+typedef DWORD UNS_32_BITS;
 typedef struct {
     UNS_32_BITS crc_table[256];
 } context;
@@ -195,14 +197,14 @@ int main(void)
         f12r_add_region(&f12r_container, &region, &ctx, sizeof(context), FC_MEM_REGION_READ | FC_MEM_REGION_WRITE);
         
         uint32_t init_runtime_end_us = ztimer_now(ZTIMER_USEC);
-        printf("%d;", (int)init_runtime_end_us - init_runtime_start_us);
+        printf("%d;", (int) (init_runtime_end_us - init_runtime_start_us));
 
         load_program_start_us = ztimer_now(ZTIMER_USEC);
 
         int res = f12r_execute_ctx(&f12r_container, &ctx, sizeof(context), &result);
 
         uint32_t execution_end_us = ztimer_now(ZTIMER_USEC);
-        printf("%d;", (int) execution_end_us - execution_start_us);
+        printf("%d;", (int) (execution_end_us - execution_start_us));
 
         printf("%s\n", BOOL_TO_STR(result));
 

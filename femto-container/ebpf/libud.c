@@ -25,12 +25,12 @@
 
 
 typedef struct {
-    long a[20][20];  // Changed to signed long
-    long b[20];      // Changed to signed long
-    long x[20];      // Changed to signed long
-    long y[100];     // Changed to signed long
-    long x_ref[20];  // Changed to signed long (assuming reference can be negative)
-    char msg[100];
+    int32_t a[20][20];  
+    int32_t b[20];      
+    int32_t x[20];      
+    int32_t y[100];     
+    int32_t x_ref[20];  
+    // char msg[100];
 } context;
 
 
@@ -52,26 +52,26 @@ static inline int memcmp(const void *s1, const void *s2, size_t n) {
 
 static inline int verify_benchmark (int res, context *ctx)
 {
-  unsigned long *x = ctx->x;
-  unsigned long *x_ref = ctx->x_ref;
+  int32_t *x = ctx->x;
+  int32_t *x_ref = ctx->x_ref;
   return (0 == memcmp (x, x_ref, 20 * sizeof (x[0]))) && (0 == res);
 }
 
 
 // Helper function for signed division using unsigned ops
 // Assumes eBPF supports signed comparisons and unsigned division (UDIV)
-static inline long sdiv(long dividend, long divisor, context *ctx) {
+static inline int32_t sdiv(int32_t dividend, int32_t divisor, context *ctx) {
 
     if (divisor == 0) {
         // Handle division by zero (e.g., return 0 or error; adjust as needed)
         return 0;
     }
     int sign = ((dividend < 0) ^ (divisor < 0)) ? -1 : 1;
-    unsigned long abs_dividend = (dividend < 0) ? -dividend : dividend;
-    unsigned long abs_divisor = (divisor < 0) ? -divisor : divisor;
+    uint32_t abs_dividend = (dividend < 0) ? -dividend : dividend;
+    uint32_t abs_divisor = (divisor < 0) ? -divisor : divisor;
 
-    unsigned long abs_result = abs_dividend / abs_divisor;  // Unsigned division
-    long result = (long)abs_result;
+    uint32_t abs_result = abs_dividend / abs_divisor;  // Unsigned division
+    int32_t result = (int32_t)abs_result;
 
     if (sign < 0) {
         result = -result;  // Use negation instead of multiplication
@@ -80,16 +80,16 @@ static inline long sdiv(long dividend, long divisor, context *ctx) {
 }
 
 int benchmark (context *ctx) {
-    long (*a)[20] = ctx->a;  
-    long *b = ctx->b;        
-    long *x = ctx->x;        
-    int chkerr = 0;
+    int32_t (*a)[20] = ctx->a;  
+    int32_t *b = ctx->b;        
+    int32_t *x = ctx->x;        
+    int32_t chkerr = 0;
 
     unsigned int sf = SCALE_FACTOR;
 
     for (unsigned int sf_cnt = 0; sf_cnt < sf; sf_cnt++) {
         int i, j, nmax = 20, n = 5;
-        long w;  
+        int32_t w;  
 
         /* Init loop */
         for(i = 0; i <= n; i++) {
@@ -108,7 +108,7 @@ int benchmark (context *ctx) {
 
         //ludcmp inline
         int k;
-        long *y = ctx->y;
+        int32_t *y = ctx->y;
 
         for(i = 0; i < n; i++) {
             for(j = i+1; j <= n; j++) { /* triangular loop vs. i */
