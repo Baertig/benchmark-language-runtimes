@@ -73,8 +73,11 @@ void mp_exec(const char *src, size_t len) {
 
 int main(void)
 {
+    ztimer_init();
     printf("=== Benchmark Begins ===\n");
     printf("iteration;init_runtime_us;load_program_us;execution_time_us;correct\n");
+
+    ztimer_sleep(ZTIMER_USEC, 3000000);
 
     for (int i=0; i < BENCH_ITERATIONS; i++) {
         printf("%d;", i);

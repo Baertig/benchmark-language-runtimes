@@ -168,6 +168,8 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
 int main(void)
 {
 
+    ztimer_init();
+
     printf("=== Benchmark Begins ===\n");
     printf("iteration;init_runtime_us;load_program_us;execution_time_us;correct\n");
 

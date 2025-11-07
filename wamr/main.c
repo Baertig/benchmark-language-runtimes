@@ -32,8 +32,12 @@ int wamr_run_cp(const void *bytecode, size_t bytecode_len, int argc, const char 
 
 int main(void)
 {
+    ztimer_init();
+
     printf("=== Benchmark Begins ===\n");
     printf("iteration;init_runtime_us;load_program_us;execution_time_us;correct\n");
+    ztimer_sleep(ZTIMER_USEC, 3000000); 
+
     for (int i = 0; i < BENCH_ITERATIONS; i++) {
         printf("%d;", i);
         uint32_t init_runtime_begin = ztimer_now(ZTIMER_USEC);

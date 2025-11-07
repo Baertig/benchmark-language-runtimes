@@ -171,10 +171,11 @@ int js_run(const jerry_char_t *script, size_t script_size)
 
 int main(void)
 {
-    ztimer_sleep(ZTIMER_USEC, 3000000);
     vfprintf(stderr, "\n vprintf test \n", NULL);
+    ztimer_init();
     printf("=== Benchmark Begins ===\n");
     printf("iteration;init_runtime_us;load_program_us;execution_time_us;correct\n");
+    ztimer_sleep(ZTIMER_USEC, 3000000);
 
     for (int i=0; i < BENCH_ITERATIONS; i++) {
         printf("%d;", i);

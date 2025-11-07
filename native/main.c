@@ -35,10 +35,12 @@ int main (void)
   size_t initial_watermark = malloc_monitor_get_usage_high_watermark();
 #endif
 
-  ztimer_sleep(ZTIMER_USEC, 3000000); // sleep for 3 seconds, so that a uart connection can be established
 
   printf("=== Benchmark Begins ===\n");
   printf("iteration;init_runtime_us;load_program_us;execution_time_us;correct\n");
+
+  ztimer_init();
+  ztimer_sleep(ZTIMER_USEC, 3000000); // sleep for 3 seconds, so that a uart connection can be established
   for (int i=0; i < BENCH_ITERATIONS; i++) {
 
     uint32_t execution_begin = ztimer_now(ZTIMER_USEC);
