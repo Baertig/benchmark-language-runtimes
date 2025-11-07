@@ -37,6 +37,8 @@
 #define LUA_MEM_SIZE (350 * 1024)
 #endif
 
+extern void dump_opcodes(void);
+
 static char lua_mem[LUA_MEM_SIZE] __attribute__ ((aligned(__BIGGEST_ALIGNMENT__)));
 
 static int msghandler(lua_State *L) {
@@ -148,6 +150,10 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
     reset_peak_lua_heap_counter();
 
     printf("\npeak_allocated_bytes = %zu\n", mem_used);
+#endif
+
+#ifdef DUMP_OPCODES
+    dump_opcodes();
 #endif
 
     // Get the return value from the script
