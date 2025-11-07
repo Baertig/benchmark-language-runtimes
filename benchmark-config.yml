@@ -1,7 +1,7 @@
 benchmarks:
   - name: tarfind
     filename: tarfind # (optional, default value is name) 
-    scale_factor: 46 
+    scale_factor: 5
     iterations: 5
     boards:
     - board_name: native
@@ -63,7 +63,7 @@ benchmarks:
 
   - name: crc_32
     filename: crc_32
-    scale_factor: 170
+    scale_factor: 16
     iterations: 5
     boards: 
     - board_name: native
@@ -71,7 +71,7 @@ benchmarks:
         - name: jerryscript
           env:
             HEAP: 30
-            PROFILE: es5.1
+            PROFILE: es.next
 
         - name: lua
           env:
@@ -93,7 +93,7 @@ benchmarks:
           env:
             HEAP: 30
             # STACK: 10 ? 
-            PROFILE: es5.1
+            PROFILE: es.next
 
         - name: lua
           env:
@@ -122,7 +122,7 @@ benchmarks:
         - name: micro-bpf
 
   - name: md5
-    scale_factor: 66
+    scale_factor: 11
     iterations: 5
     boards:
     - board_name: native
@@ -168,7 +168,7 @@ benchmarks:
         - name: wamr
 
   - name: xgboost
-    scale_factor: 42
+    scale_factor: 6
     iterations: 5
     boards:
     - board_name: native
@@ -227,7 +227,7 @@ benchmarks:
         - name: micro-bpf
 
   - name: libud
-    scale_factor: 1785
+    scale_factor: 308
     iterations: 5
     boards:
     - board_name: native
