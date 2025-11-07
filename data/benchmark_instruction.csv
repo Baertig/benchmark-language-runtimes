@@ -1,0 +1,6 @@
+Benchmark;Branching;Memory;Compute
+crc_32;14;14;72
+libud;17;24;59
+md5;14;13;73
+tarfind;27;26;47
+xgboost;15;25;60
