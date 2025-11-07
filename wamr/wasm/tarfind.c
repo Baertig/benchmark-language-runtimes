@@ -22,8 +22,6 @@ extern void free(void *ptr);
 extern int rand(void);
 
 
-#include "support.h"
-
 #ifndef SCALE_FACTOR
 #define SCALE_FACTOR 1
 #endif
