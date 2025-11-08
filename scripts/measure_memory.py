@@ -14,6 +14,8 @@ from rich.live import Live
 from rich.panel import Panel
 from rich.text import Text
 
+from elftools.elf.elffile import ELFFile
+
 import altair as alt
 import polars as pl
 
@@ -69,11 +71,14 @@ def load_mappings(mappings_file):
         Expected YAML structure:
             mappings:
                 default:
-                    - prefix: [core]
-                        category: Core
+                    - category: Runtime
+                      prefixes:
+                        - [app, benchmark]
+                        - [pkg, lua]
                 adafruit-feather-nrf52840-sense:
-                    - prefix: [pkg, lua]
-                        category: App
+                    - category: App
+                      prefixes:
+                        - [pkg, lua]
 
     Returns a dict: { board_name: { (prefix_tuple) : category, ... }, 'default': {...} }
     """
@@ -96,36 +101,47 @@ def load_mappings(mappings_file):
 
             if not isinstance(entries, list):
                 raise RuntimeError(
-                    f"mappings['{env_name}'] must be a list of {{prefix, category}} objects")
+                    f"mappings['{env_name}'] must be a list of category entries"
+                )
 
-            for m in entries:
-                if not isinstance(m, dict):
+            for entry in entries:
+                if not isinstance(entry, dict):
                     continue
 
-                prefix = tuple(m.get('prefix', []) or [])
-                category = m.get('category')
+                category = entry.get("category")
+                prefixes = entry.get("prefixes", [])
 
-                if not prefix or not category:
+                if not category or not prefixes:
                     continue
 
-                board_mappings.setdefault(str(env_name), {})[prefix] = category
+                if not isinstance(prefixes, list):
+                    continue
+
+                for prefix_list in prefixes:
+                    if not isinstance(prefix_list, list):
+                        continue
+
+                    prefix_tuple = tuple(prefix_list)
+                    board_mappings.setdefault(str(env_name), {})[prefix_tuple] = (
+                        category
+                    )
 
         return board_mappings
     except Exception as e:
         raise RuntimeError(f"Error loading mappings file: {e}")
 
 
-def process_symbols(symbols, mappings, board_name):
+def process_symbols(symbols: list[dict], mappings: dict, board_name: str):
     """Aggregate sizes per (category, type) with board-specific mappings.
 
     - mappings: dict returned by load_mappings() keyed by board names and 'default'.
     - board_name: current board name used to select mappings.
     Returns a dict keyed by (category, SymbolType) -> total size.
     """
-    board_map = mappings.get(board_name, {}) if isinstance(
-        mappings, dict) else {}
-    default_map = mappings.get(
-        'default', {}) if isinstance(mappings, dict) else {}
+    board_map = mappings.get(board_name, {})
+    default_map = mappings.get("default", {})
+
+    mappings = default_map | board_map
 
     agg = {}
     for sym in symbols:
@@ -134,7 +150,7 @@ def process_symbols(symbols, mappings, board_name):
             continue
 
         sym_name = sym.get('sym')
-        if sym_name != None and sym_name != "":
+        if sym_name is not None and sym_name != "":
             path.append(sym_name)
 
         size = sym.get('size', 0)
@@ -144,17 +160,27 @@ def process_symbols(symbols, mappings, board_name):
 
         # Check mappings: prefer board-specific, then default
         matched = False
-        for mapping_dict in (board_map, default_map):
-            for prefix, cat in mapping_dict.items():
-                if path[:len(prefix)] == list(prefix):
+        for prefix, cat in mappings.items():
+            prefix = list(prefix)
+            prefix_last = prefix[-1] if prefix else ""
+
+            if prefix_last.endswith("*"):
+                # Wildcard match: prefix without '*'
+                prefix_matches = path[: len(prefix) - 1] == prefix[:-1]
+                wildcard_match = path[len(prefix) - 1].startswith(prefix_last[:-1])
+
+                if prefix_matches and wildcard_match:
                     cat_name = cat
                     matched = True
                     break
-            if matched:
+
+            if path[: len(prefix)] == prefix:
+                cat_name = cat
+                matched = True
                 break
 
-        if not matched:
-            print(f"path: {"/".join(path)} not matched")
+        if not matched and size > 5:
+            print(f"path: {'/'.join(path)} not matched [size = {size}]")
             cat_name = path[0] if path else 'unknown'
 
         key = (cat_name, stype)
@@ -162,11 +188,12 @@ def process_symbols(symbols, mappings, board_name):
     return agg
 
 
-def run_make_cosy(console, env_dir, board_name, filename):
+def run_make_cosy(console, env_dir, board_name, filename, env_vars):
     # Set environment variables locally for the subprocess
     env = os.environ.copy()
     env['BOARD'] = board_name
     env['BENCHMARK'] = filename
+    env.update({k: str(v) for k, v in env_vars.items()})
 
     # 1) Build everything first
     build_output = []
@@ -222,8 +249,39 @@ def run_make_cosy(console, env_dir, board_name, filename):
 
     return 'symbols.json'
 
+def analyze_elf_sizes(elf_path):
+    """Analyze an ELF file and return total size and individual section sizes.
 
-def process_combination(console, bench_name, filename, board_name, env_name, mappings):
+    - Total size: Sum of .text, .data, .bss, .rodata (common for embedded memory).
+    - Individual sections: Dict of section names to sizes.
+
+    Args:
+        elf_path (str): Path to the ELF file.
+
+    Returns:
+        dict: {'total_memory': int, 'sections': dict[str, int]}
+    """
+    try:
+        with open(elf_path, "rb") as f:
+            elffile = ELFFile(f)
+
+            sections = {}
+            total_memory = 0
+            # memory_sections = {".text", ".data", ".bss", ".rodata"}  # Adjust as needed
+
+            for section in elffile.iter_sections():
+                size = section.header.sh_size
+                sections[section.name] = size
+                total_memory += size
+
+            return {"total_memory": total_memory, "sections": sections}
+    except Exception as e:
+        raise RuntimeError(f"Error analyzing ELF file {elf_path}: {e}")
+
+
+def process_combination(console, bench_name, filename, board_name, env_entry, mappings):
+    env_name = env_entry["name"]
+    env_vars = env_entry.get("env", {})
     console.print(
         f"\nProcessing {bench_name} on {board_name} with {env_name}...")
 
@@ -233,14 +291,14 @@ def process_combination(console, bench_name, filename, board_name, env_name, map
         return []
 
     try:
-        symbols_file = run_make_cosy(console, env_dir, board_name, filename)
+        symbols_file = run_make_cosy(console, env_dir, board_name, filename, env_vars)
     except subprocess.CalledProcessError as e:
         console.print(f"[red]Error running make cosy-output: {e}[/red]")
         return []
 
     symbols_path = os.path.join(env_dir, symbols_file)
     if not os.path.exists(symbols_path):
-        console.print(f"[red]symbols.json not found, skipping[/red]")
+        console.print("[red]symbols.json not found, skipping[/red]")
         return []
 
     try:
@@ -252,16 +310,26 @@ def process_combination(console, bench_name, filename, board_name, env_name, map
 
     cat_type_sizes = process_symbols(data['symbols'], mappings, board_name)
 
+    elf_path = os.path.join(env_dir, "bin", board_name, f"{env_dir}_benchmark.elf")
+    elf_sizes = analyze_elf_sizes(elf_path)
+
     results = []
     for (cat, stype), size in cat_type_sizes.items():
-        results.append({
-            'benchmark': bench_name,
-            'board': board_name,
-            'environment': env_name,
-            'category': cat,
-            'type': stype.section,
-            'size': size
-        })
+        total_size = elf_sizes["total_memory"]
+        section_total_size = elf_sizes["sections"].get(stype.section)
+
+        results.append(
+            {
+                "benchmark": bench_name,
+                "board": board_name,
+                "environment": env_name,
+                "category": cat,
+                "type": stype.section,
+                "size": size,
+                "total_size": total_size,
+                "section_total_size": section_total_size,
+            }
+        )
 
     # Delete symbols.json
     try:
@@ -278,7 +346,18 @@ def write_csv(results, out_path):
         os.makedirs(os.path.dirname(out_path) or '.', exist_ok=True)
         with open(out_path, 'w', newline='') as f:
             writer = csv.DictWriter(
-                f, fieldnames=['benchmark', 'board', 'environment', 'category', 'type', 'size'])
+                f,
+                fieldnames=[
+                    "benchmark",
+                    "board",
+                    "environment",
+                    "category",
+                    "type",
+                    "size",
+                    "total_size",
+                    "section_total_size",
+                ],
+            )
             writer.writeheader()
             writer.writerows(results)
         print(f"Results written to {out_path}")
@@ -350,12 +429,12 @@ def generate_figures(results, figures_dir, console, include_types=None, label_su
 
     suffix = f"_{label_suffix.lower()}" if label_suffix else ""
     out_file = os.path.join(figures_dir, f"memory_distribution{suffix}.html")
+
     try:
         chart.save(out_file)
-        console.print(
-            f"[green]Saved faceted stacked bar chart -> {out_file}[/green]")
+        console.print(f"[green]Saved faceted bar chart -> {out_file}[/green]")
     except Exception as e:
-        console.print(f"[red]Failed to save stacked bar chart: {e}[/red]")
+        console.print(f"[red]Failed to save bar chart: {e}[/red]")
 
 
 def main():
@@ -387,13 +466,13 @@ def main():
         board_name = bb.board_name
 
         for env_entry in bb.supported_environments:
-            env_name = env_entry['name']
             disabled = env_entry.get('disabled', False)
             if disabled:
                 continue
 
             combo_results = process_combination(
-                console, bench_name, filename, board_name, env_name, mappings)
+                console, bench_name, filename, board_name, env_entry, mappings
+            )
             results.extend(combo_results)
 
     try:

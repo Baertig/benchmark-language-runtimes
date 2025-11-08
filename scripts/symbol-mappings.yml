@@ -1,54 +1,109 @@
 mappings:
+  default:
+    - category: Heap
+      prefixes:
+        - [app, mp_heap]
+        - [app, lua_mem]
+
+    - category: Runtime
+      prefixes:
+        - [app, main]
+
+        # jerryscript
+        - [pkg, jerryscript]
+        - [app, prin_jerry_error.str1.1]
+        - [app, print_jerry_error]
+        - [app, print_jerry_error*]
+        - [unspecified, unlikely.ecma*]
+        - [unspecified, ecma*]
+        - [unspecified, lit*]
+        - [unspecified, parser*]
+        - [unspecified, scanner*]
+        - [unspecified, vm*]
+        - [app, js_run*]
+        # wamr
+        - [pkg, wamr]
+        - [app, iwasm_bytecode_exec_main.str1.1]
+        - [unspecified, wasm*]
+        - [unspecified, gc_*]
+        # micropython
+        - [app, mp_exec]
+        # wamr
+        - [app, iwasm*]
+        - [app, wamr*]
+        # lua
+        - [pkg, lua]
+        - [pkg, tlsf]
+        - [app, msghandler]
+        - [app, lua*]
+        # femto-container
+        - [pkg, femto-container]
+        # micro-bpf
+        - [unspecified, .Lanon*]
+        - [unspecified, rel.ro*]
+        - [unspecified, core*]
+        - [unspecified, rbpf*]
+        - [unspecified, <rbpf*]
+        - [unspecified, alloc*]
+        - [unspecified, <alloc*]
+        - [unspecified, goblin*]
+        - [unspecified, gcc_except_table*]
+        - [alloc]
+        - [compiler-builtins]
+
+    - category: Application
+      prefixes:
+        # jerryscript
+        - [app, benchmark_js]
+        # native
+        - [app, benchmarks]
+        - [app, main.str1.1]
+        - [app, startup.main]
+        # wamr
+        - [app, main_wasm]
+        - [app, benchmark_wasm]
+        # micropython
+        - [app, benchmark_py]
+        # lua
+        - [app, benchmark_lua]
+        - [app, main.o, benchmark_lua]
+        # femto-container
+        - [app, benchmark_bin]
+    
+
+    - category: Kernel
+      prefixes:
+        - [newlib]
+        - [core]
+        - [sys]
+        - [cpu]
+        - [drivers]
+        - [boards]
+
+    - category: Debug
+      prefixes: 
+        # jerryscript
+        - [unspecified, debug*]
+        - [app, debug*]
+
+    - category: fill
+      prefixes:
+        - [fill]
+
+    - category: Unspecified
+      prefixes:
+        - [unspecified, comment]
+        - [unspecified, eh_frame]
+
+  native64:
+    - category: Runtime
+      prefixes:
+        # micropython
+        - [app, bin, native64, pkg, micropython]
+
+
   adafruit-feather-nrf52840-sense:
-    # jerryscript
-    - prefix: [pkg, jerryscript]
-      category: Runtime
-    - prefix: [app, prin_jerry_error.str1.1]
-      category: Runtime
-
-    - prefix: [app, benchmark_js]
-      category: Application
     # micropython
-    - prefix: [app, bin, adafruit-feather-nrf52840-sense, pkg, micropython]
-      category: Runtime
-    - prefix: [app, bin, native64, pkg, micropython, py]
-      category: Runtime
-
-    - prefix: [app, mp_heap]
-      category: Runtime
-
-    - prefix: [app, benchmark_py]
-      category: Application
-
-    # native
-    - prefix: [app, benchmarks]
-      category: Application
-    - prefix: [app, main.str1.1]
-      category: Application
-    - prefix: [app, startup.main]
-      category: Application
-
-    # wamr
-    - prefix: [pkg, wamr]
-      category: Runtime
-
-    - prefix: [app, iwasm_bytecode_exec_main.str1.1]
-      category: Runtime
-
-    - prefix: [app, main_wasm]
-      category: Application
-    
-    # all
-    
-    - prefix: [newlib]
-      category: Kernel
-    - prefix: [core]
-      category: Kernel
-    - prefix: [sys]
-      category: Kernel
-    - prefix: [cpu]
-      category: Kernel
-    - prefix: [drivers]
-      category: Kernel
-    - prefix: [boards]
-      category: Kernel
+    - category: Runtime
+      prefixes:
+        - [app, bin, adafruit-feather-nrf52840-sense, pkg, micropython]
