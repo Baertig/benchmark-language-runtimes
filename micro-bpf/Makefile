@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = micro-bpf
+APPLICATION = micro-bpf_benchmark
 
 # TODO: Fix bug in docker image
 # BOARD_BLACKLIST := native32 native64 native
@@ -76,3 +76,4 @@ QUIET ?= 1
 CFLAGS += -DTHREAD_STACKSIZE_MAIN='(THREAD_STACKSIZE_DEFAULT+THREAD_EXTRA_STACKSIZE_PRINTF+(1024*35))'
 
 include $(RIOTBASE)/Makefile.include
+include ../Makefile.include

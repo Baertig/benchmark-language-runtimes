@@ -1,4 +1,4 @@
-APPLICATION = micropython
+APPLICATION = micropython_benchmark
 
 BOARD ?= native
 

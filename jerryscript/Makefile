@@ -1,5 +1,5 @@
 # application name
-APPLICATION = javascript_benchmark
+APPLICATION = jerryscript_benchmark
 
 # default BOARD environment
 BOARD ?= native

@@ -1,5 +1,5 @@
 # application name
-APPLICATION = femtocontainer_benchmark
+APPLICATION = femto-container_benchmark
 
 # default BOARD environment
 BOARD ?= native

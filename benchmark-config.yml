@@ -4,7 +4,7 @@ benchmarks:
     scale_factor: 5
     iterations: 5
     boards:
-    - board_name: native
+    - board_name: native64
       supported_environments:
         - name: jerryscript
           env:
@@ -52,21 +52,21 @@ benchmarks:
           env: 
             HEAP: 16384 # 16 * 1024
             STACK: 8192 # 8 * 1024
-    - board_name: esp32-wroom-32
-      supported_environments:
-        - name: jerryscript
-        - name: lua
-        - name: micropython 
-          disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
-        - name: native
-        - name: wamr
+    # - board_name: esp32-wroom-32
+    #   supported_environments:
+    #     - name: jerryscript
+    #     - name: lua
+    #     - name: micropython 
+    #       disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
+    #     - name: native
+    #     - name: wamr
 
   - name: crc_32
     filename: crc_32
     scale_factor: 16
     iterations: 5
     boards: 
-    - board_name: native
+    - board_name: native64
       supported_environments:
         - name: jerryscript
           env:
@@ -109,23 +109,23 @@ benchmarks:
         - name: femto-container
         - name: micro-bpf
 
-    - board_name: esp32-wroom-32
-      supported_environments:
-        - name: jerryscript 
-          disabled: true # -> takes way too long because of the included Int64 library
-        - name: lua
-        - name: micropython 
-          disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
-        - name: native
-        - name: wamr
-        - name: femto-container
-        - name: micro-bpf
+    # - board_name: esp32-wroom-32
+    #   supported_environments:
+    #     - name: jerryscript 
+    #       disabled: true # -> takes way too long because of the included Int64 library
+    #     - name: lua
+    #     - name: micropython 
+    #       disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
+    #     - name: native
+    #     - name: wamr
+    #     - name: femto-container
+    #     - name: micro-bpf
 
   - name: md5
     scale_factor: 11
     iterations: 5
     boards:
-    - board_name: native
+    - board_name: native64
       supported_environments:
         - name: jerryscript
           env:
@@ -158,20 +158,20 @@ benchmarks:
 
         - name: native
         - name: wamr
-    - board_name: esp32-wroom-32
-      supported_environments:
-        - name: jerryscript
-        - name: lua
-        - name: micropython 
-          disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
-        - name: native
-        - name: wamr
+    # - board_name: esp32-wroom-32
+    #   supported_environments:
+    #     - name: jerryscript
+    #     - name: lua
+    #     - name: micropython 
+    #       disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
+    #     - name: native
+    #     - name: wamr
 
   - name: xgboost
     scale_factor: 6
     iterations: 5
     boards:
-    - board_name: native
+    - board_name: native64
       supported_environments:
         - name: jerryscript
           env:
@@ -215,22 +215,22 @@ benchmarks:
         - name: femto-container
         - name: micro-bpf
 
-    - board_name: esp32-wroom-32
-      supported_environments:
-        - name: jerryscript
-        - name: lua
-        - name: micropython 
-          disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
-        - name: native
-        - name: wamr
-        - name: femto-container
-        - name: micro-bpf
+    # - board_name: esp32-wroom-32
+    #   supported_environments:
+    #     - name: jerryscript
+    #     - name: lua
+    #     - name: micropython 
+    #       disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
+    #     - name: native
+    #     - name: wamr
+    #     - name: femto-container
+    #     - name: micro-bpf
 
   - name: libud
     scale_factor: 308
     iterations: 5
     boards:
-    - board_name: native
+    - board_name: native64
       supported_environments:
         - name: jerryscript
           env:
@@ -270,13 +270,13 @@ benchmarks:
         - name: femto-container
         - name: micro-bpf
 
-    - board_name: esp32-wroom-32
-      supported_environments:
-        - name: jerryscript
-        - name: lua
-        - name: micropython 
-          disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
-        - name: native
-        - name: wamr
-        - name: femto-container
-        - name: micro-bpf
+    # - board_name: esp32-wroom-32
+    #   supported_environments:
+    #     - name: jerryscript
+    #     - name: lua
+    #     - name: micropython 
+    #       disabled: true # -> micropython does not run on esp32 boards, they are blacklisted
+    #     - name: native
+    #     - name: wamr
+    #     - name: femto-container
+    #     - name: micro-bpf

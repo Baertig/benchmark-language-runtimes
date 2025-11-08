@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = native-benchmark
+APPLICATION = native_benchmark
 
 # Change this to your board if you want to build for a different board
 BOARD ?= native

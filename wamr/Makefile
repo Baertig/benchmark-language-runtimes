@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = wamr-benchmark
+APPLICATION = wamr_benchmark
 
 # Change this to your board if you want to build for a different board
 BOARD ?= native
