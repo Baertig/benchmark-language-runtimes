@@ -74,7 +74,7 @@ function benchmark() {
   var r = 0;
 
   for (var g = 0; g < sf; g++) {
-    seed[0] = 0;
+    seed = 0n;
     r = crc32pseudo();
   }
 
