@@ -16,4 +16,10 @@ measure-memory:
 	mkdir -p data/memory figures/memory
 	pipenv run ./scripts/measure_memory.py --config benchmark-config.yml --csv-out data/memory/memory-sizes.csv --figures figures/memory --mappings scripts/symbol-mappings.yml
 
+measure-application-code-size:
+	pipenv run ./scripts/application_code_size.py
+
+bench-heap-config:
+	pipenv run ./scripts/benchmark.py --config scripts/heap_benchmark_config.yml --board adafruit-feather-nrf52840-sense --write-csv $(RUNTIME_DIR)/bench-heap-feather.csv --port /dev/ttyACM1
+
 
