@@ -21,10 +21,6 @@
 
 #define N_SEARCHES 5
 
-/* BEEBS heap is just an array */
-/* 8995 = sizeof(tar_header_t) * ARCHIVE_FILES */
-#define roundup(d, u) ((((d)+(u))/(u))*(u))
-
 // this is the basic TAR header format which is in ASCII
 typedef struct {
 	char filename[100];
