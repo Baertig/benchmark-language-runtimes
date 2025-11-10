@@ -1,0 +1,593 @@
+benchmarks:
+  - name: tarfind
+    filename: tarfind # (optional, default value is name) 
+    scale_factor: 5
+    iterations: 5
+    boards:
+    - board_name: adafruit-feather-nrf52840-sense 
+      supported_environments:
+        - name: jerryscript
+          label: jerryscript-8
+          env:
+            HEAP: 8 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-18
+          env:
+            HEAP: 18 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-28
+          env:
+            HEAP: 28 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-38
+          env:
+            HEAP: 38 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-48
+          env:
+            HEAP: 48 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-58
+          env:
+            HEAP: 58 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-68
+          env:
+            HEAP: 68 #kb
+            PROFILE: es5.1
+
+        - name: lua
+          label: lua-60
+          env:
+            HEAP: 60000 
+            GC_AGGRESSIVE: "ON"
+
+        - name: lua
+          label: lua-70
+          env:
+            HEAP: 70000 
+            GC_AGGRESSIVE: "ON"
+
+        - name: lua
+          label: lua-80
+          env:
+            HEAP: 80000 
+            GC_AGGRESSIVE: "ON"
+
+        - name: lua
+          label: lua-90
+          env:
+            HEAP: 90000 
+            GC_AGGRESSIVE: "ON"
+
+        - name: lua
+          label: lua-100
+          env:
+            HEAP: 100000 
+            GC_AGGRESSIVE: "ON"
+
+        - name: lua
+          label: lua-110
+          env:
+            HEAP: 110000 
+            GC_AGGRESSIVE: "ON"
+
+        - name: lua
+          label: lua-120
+          env:
+            HEAP: 120000 
+            GC_AGGRESSIVE: "ON"
+
+        - name: micropython
+          label: micropython-25
+          env:
+            HEAP: 25000 
+
+        - name: micropython
+          label: micropython-35
+          env:
+            HEAP: 35000 
+
+        - name: micropython
+          label: micropython-45
+          env:
+            HEAP: 45000 
+
+        - name: micropython
+          label: micropython-55
+          env:
+            HEAP: 55000
+
+        - name: micropython
+          label: micropython-65
+          env:
+            HEAP: 65000
+
+        - name: micropython
+          label: micropython-75
+          env:
+            HEAP: 75000
+
+        - name: micropython
+          label: micropython-85
+          env:
+            HEAP: 85000
+
+
+  - name: crc_32
+    filename: crc_32
+    scale_factor: 16
+    iterations: 5
+    boards: 
+    - board_name: adafruit-feather-nrf52840-sense 
+      supported_environments:
+        - name: jerryscript
+          label: jerryscript-30
+          env:
+            HEAP: 30
+            PROFILE: es.next
+
+        - name: jerryscript
+          label: jerryscript-40
+          env:
+            HEAP: 40
+            PROFILE: es.next
+
+        - name: jerryscript
+          label: jerryscript-50
+          env:
+            HEAP: 50
+            PROFILE: es.next
+
+        - name: jerryscript
+          label: jerryscript-60
+          env:
+            HEAP: 60
+            PROFILE: es.next
+
+        - name: jerryscript
+          label: jerryscript-70
+          env:
+            HEAP: 70
+            PROFILE: es.next
+
+        - name: jerryscript
+          label: jerryscript-80
+          env:
+            HEAP: 80
+            PROFILE: es.next
+
+        - name: jerryscript
+          label: jerryscript-90
+          env:
+            HEAP: 90
+            PROFILE: es.next
+
+        - name: lua
+          label: lua-60
+          env:
+            HEAP: 60000
+
+        - name: lua
+          label: lua-70
+          env:
+            HEAP: 70000
+
+        - name: lua
+          label: lua-80
+          env:
+            HEAP: 80000
+
+        - name: lua
+          label: lua-90
+          env:
+            HEAP: 90000
+
+        - name: lua
+          label: lua-100
+          env:
+            HEAP: 100000
+
+        - name: lua
+          label: lua-110
+          env:
+            HEAP: 110000
+
+        - name: lua
+          label: lua-120
+          env:
+            HEAP: 120000
+
+        - name: micropython
+          label: micropython-12
+          env:
+            HEAP: 12000 
+
+        - name: micropython
+          label: micropython-22
+          env:
+            HEAP: 22000 
+
+        - name: micropython
+          label: micropython-32
+          env:
+            HEAP: 32000 
+
+        - name: micropython
+          label: micropython-42
+          env:
+            HEAP: 42000 
+
+        - name: micropython
+          label: micropython-52
+          env:
+            HEAP: 52000 
+
+        - name: micropython
+          label: micropython-62
+          env:
+            HEAP: 62000 
+
+        - name: micropython
+          label: micropython-72
+          env:
+            HEAP: 72000 
+
+  - name: md5
+    scale_factor: 11
+    iterations: 5
+    boards:
+    - board_name: adafruit-feather-nrf52840-sense 
+      supported_environments:
+        - name: jerryscript
+          label: jerryscript-20
+          env:
+            HEAP: 20 #kb
+
+        - name: jerryscript
+          label: jerryscript-30
+          env:
+            HEAP: 30 #kb
+
+        - name: jerryscript
+          label: jerryscript-40
+          env:
+            HEAP: 40 #kb
+
+        - name: jerryscript
+          label: jerryscript-50
+          env:
+            HEAP: 50 #kb
+
+        - name: jerryscript
+          label: jerryscript-60
+          env:
+            HEAP: 60 #kb
+
+        - name: jerryscript
+          label: jerryscript-70
+          env:
+            HEAP: 70 #kb
+
+        - name: jerryscript
+          label: jerryscript-80
+          env:
+            HEAP: 80 #kb
+
+        - name: lua
+          label: lua-95
+          env:
+            HEAP: 95000
+
+        - name: lua
+          label: lua-105
+          env:
+            HEAP: 105000
+
+        - name: lua
+          label: lua-115
+          env:
+            HEAP: 115000
+
+        - name: lua
+          label: lua-125
+          env:
+            HEAP: 125000
+
+        - name: lua
+          label: lua-135
+          env:
+            HEAP: 135000
+
+        - name: lua
+          label: lua-145
+          env:
+            HEAP: 145000
+
+        - name: lua
+          label: lua-155
+          env:
+            HEAP: 155000
+
+        - name: micropython
+          label: micropython-15
+          env:
+            HEAP: 15000
+
+        - name: micropython
+          label: micropython-25
+          env:
+            HEAP: 25000
+
+        - name: micropython
+          label: micropython-35
+          env:
+            HEAP: 35000
+
+        - name: micropython
+          label: micropython-45
+          env:
+            HEAP: 45000
+
+        - name: micropython
+          label: micropython-55
+          env:
+            HEAP: 55000
+
+        - name: micropython
+          label: micropython-65
+          env:
+            HEAP: 65000
+
+        - name: micropython
+          label: micropython-75
+          env:
+            HEAP: 75000
+
+  - name: xgboost
+    scale_factor: 6
+    iterations: 5
+    boards:
+    - board_name: adafruit-feather-nrf52840-sense 
+      supported_environments:
+        - name: jerryscript
+          label: jerryscript-50
+          env:
+            HEAP: 50 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-60
+          env:
+            HEAP: 60 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-70
+          env:
+            HEAP: 70 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-80
+          env:
+            HEAP: 80 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-90
+          env:
+            HEAP: 90 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-100
+          env:
+            HEAP: 100 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-110
+          env:
+            HEAP: 110 #kb
+            PROFILE: es5.1
+
+        - name: lua
+          label: lua-230
+          env:
+            HEAP: 230000
+
+        - name: lua
+          label: lua-240
+          env:
+            HEAP: 240000
+
+        - name: lua
+          label: lua-250
+          env:
+            HEAP: 250000
+
+        - name: lua
+          label: lua-260
+          env:
+            HEAP: 260000
+
+        - name: lua
+          label: lua-270
+          env:
+            HEAP: 270000
+
+        - name: lua
+          label: lua-280
+          env:
+            HEAP: 280000
+
+        - name: lua
+          label: lua-290
+          env:
+            HEAP: 290000
+
+        - name: micropython
+          label: micropython-110
+          env:
+            HEAP: 110000
+
+        - name: micropython
+          label: micropython-120
+          env:
+            HEAP: 120000
+
+        - name: micropython
+          label: micropython-130
+          env:
+            HEAP: 130000
+
+        - name: micropython
+          label: micropython-140
+          env:
+            HEAP: 140000
+
+        - name: micropython
+          label: micropython-150
+          env:
+            HEAP: 150000
+
+        - name: micropython
+          label: micropython-160
+          env:
+            HEAP: 160000
+
+        - name: micropython
+          label: micropython-170
+          env:
+            HEAP: 170000
+
+  - name: libud
+    scale_factor: 308
+    iterations: 5
+    boards:
+    - board_name: adafruit-feather-nrf52840-sense 
+      supported_environments:
+        - name: jerryscript
+          label: jerryscript-7
+          env:
+            HEAP: 7 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-17
+          env:
+            HEAP: 17 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-27
+          env:
+            HEAP: 27 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-37
+          env:
+            HEAP: 37 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-47
+          env:
+            HEAP: 47 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-57
+          env:
+            HEAP: 57 #kb
+            PROFILE: es5.1
+
+        - name: jerryscript
+          label: jerryscript-67
+          env:
+            HEAP: 67 #kb
+            PROFILE: es5.1
+
+        - name: lua
+          label: lua-35
+          env:
+            HEAP: 35000
+
+        - name: lua
+          label: lua-45
+          env:
+            HEAP: 45000
+
+        - name: lua
+          label: lua-55
+          env:
+            HEAP: 55000
+
+        - name: lua
+          label: lua-65
+          env:
+            HEAP: 65000
+
+        - name: lua
+          label: lua-75
+          env:
+            HEAP: 75000
+
+        - name: lua
+          label: lua-85
+          env:
+            HEAP: 85000
+
+        - name: lua
+          label: lua-95
+          env:
+            HEAP: 95000
+
+        - name: micropython
+          label: micropython-11
+          env:
+            HEAP: 11000
+
+        - name: micropython
+          label: micropython-21
+          env:
+            HEAP: 21000
+
+        - name: micropython
+          label: micropython-31
+          env:
+            HEAP: 31000
+
+        - name: micropython
+          label: micropython-41
+          env:
+            HEAP: 41000
+
+        - name: micropython
+          label: micropython-51
+          env:
+            HEAP: 51000
+
+        - name: micropython
+          label: micropython-61
+          env:
+            HEAP: 61000
+
+        - name: micropython
+          label: micropython-71
+          env:
+            HEAP: 71000
