@@ -68,10 +68,12 @@ benchmark.js: .FORCE
 
 # rebuild jerryscript if config does not match
 check_config: .FORCE
-	@if [ ! -f .jerry_config ] || [ "$$(cat .jerry_config)" != "$(HEAP);$(STACK);$(PROFILE);$(MEM_STATS);$(ERROR_MESSAGES);$(DUMP_BYTECODE)" ]; then \
-		echo "$(HEAP);$(STACK);$(PROFILE);$(MEM_STATS);$(ERROR_MESSAGES);$(DUMP_BYTECODE)" > .jerry_config; \
+	CONFIG_NAME=.jerry_config_$(BOARD); \
+	if [ ! -f $$CONFIG_NAME ] || [ "$$(cat $$CONFIG_NAME)" != "$(HEAP);$(STACK);$(PROFILE);$(MEM_STATS);$(ERROR_MESSAGES);$(DUMP_BYTECODE)" ]; then \
+		echo "$(HEAP);$(STACK);$(PROFILE);$(MEM_STATS);$(ERROR_MESSAGES);$(DUMP_BYTECODE)" > $$CONFIG_NAME; \
 		$(MAKE) clean; \
 	fi
+	@echo "Using JerryScript config: $(HEAP)KiB heap, $(STACK)KiB stack, profile=$(PROFILE), mem_stats=$(MEM_STATS), error_messages=$(ERROR_MESSAGES), dump_bytecode=$(DUMP_BYTECODE)"
 
 callgrind: all-valgrind
 	valgrind --tool=callgrind $(ELFFILE)

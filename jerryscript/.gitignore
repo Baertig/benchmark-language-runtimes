@@ -1,3 +1,3 @@
 bin/
 benchmark.js
-.jerry_config
+.jerry_config*

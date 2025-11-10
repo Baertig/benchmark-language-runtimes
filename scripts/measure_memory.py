@@ -13,6 +13,7 @@ from rich.console import Console
 from rich.live import Live
 from rich.panel import Panel
 from rich.text import Text
+from rich.table import Table
 
 from elftools.elf.elffile import ELFFile
 
@@ -21,6 +22,19 @@ import polars as pl
 
 from config import Config
 
+def print_dict_as_table(
+    console: Console,
+    data: dict,
+    title: str = "Dictionary Contents",
+    key_label: str = "Key",
+    value_label: str = "Value",
+) -> None:
+    table = Table(title=title)
+    table.add_column(key_label, style="bold")
+    table.add_column(value_label)
+    for key, value in data.items():
+        table.add_row(str(key), str(value))
+    console.print(table)
 
 class SymbolType(Enum):
     """Symbol section types as reported by cosy.
@@ -180,7 +194,7 @@ def process_symbols(symbols: list[dict], mappings: dict, board_name: str):
                 break
 
         if not matched and size > 5:
-            print(f"path: {'/'.join(path)} not matched [size = {size}]")
+            print(f"path: {'/'.join(path)} not matched [size = {size}, type = {stype}]")
             cat_name = path[0] if path else 'unknown'
 
         key = (cat_name, stype)
@@ -191,9 +205,14 @@ def process_symbols(symbols: list[dict], mappings: dict, board_name: str):
 def run_make_cosy(console, env_dir, board_name, filename, env_vars):
     # Set environment variables locally for the subprocess
     env = os.environ.copy()
-    env['BOARD'] = board_name
-    env['BENCHMARK'] = filename
-    env.update({k: str(v) for k, v in env_vars.items()})
+    added_env = {}
+    added_env["BOARD"] = board_name
+    added_env["BENCHMARK"] = filename
+    added_env.update({k: str(v) for k, v in env_vars.items()})
+
+    print_dict_as_table(console, added_env, "Configuration", "Variable")
+
+    env |= added_env
 
     # 1) Build everything first
     build_output = []
@@ -406,25 +425,35 @@ def generate_figures(results, figures_dir, console, include_types=None, label_su
     if label_suffix:
         title += f" ({label_suffix})"
 
+    df = df.filter(pl.col("board") != "native64")
+
+    sort = [
+        "jerryscript",
+        "micropython",
+        "lua",
+        "micro-bpf",
+        "femto-container",
+        "wamr",
+        "native",
+    ]
+
     chart = (
-        alt.Chart(
-            df)
+        alt.Chart(df)
         .mark_bar()
         .encode(
-            x=alt.X('environment:N', title='Environment'),
-            y=alt.Y('size:Q', stack='zero', title='Size (bytes)'),
-            color=alt.Color('category:N', title='Category'),
+            x=alt.X("environment:N", title="Environment", sort=sort),
+            y=alt.Y("size:Q", stack="zero", title="Size (bytes)"),
+            color=alt.Color("category:N", title="Category"),
             tooltip=[
-                alt.Tooltip('type:N', title='Section'),
-                alt.Tooltip('category:N'),
-                alt.Tooltip('size:Q', title='Size (bytes)')
-            ]
+                alt.Tooltip("type:N", title="Section"),
+                alt.Tooltip("category:N"),
+                alt.Tooltip("size:Q", title="Size (bytes)"),
+            ],
         )
         .facet(
-            row=alt.Row('board:N', title='Board'),
-            column=alt.Column('benchmark:N', title=title)
+            row=alt.Row("board:N", title="Board"),
+            column=alt.Column("benchmark:N", title=title),
         )
-        .resolve_scale(y='independent')
     )
 
     suffix = f"_{label_suffix.lower()}" if label_suffix else ""

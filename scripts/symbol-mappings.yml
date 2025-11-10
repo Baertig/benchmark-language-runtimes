@@ -4,6 +4,7 @@ mappings:
       prefixes:
         - [app, mp_heap]
         - [app, lua_mem]
+        - [pkg, jerryscript, jerry-core, jcontext, jerry_global_heap]
 
     - category: Runtime
       prefixes:
@@ -28,6 +29,7 @@ mappings:
         - [unspecified, gc_*]
         # micropython
         - [app, mp_exec]
+        - [app, mp_exec.str*]
         # wamr
         - [app, iwasm*]
         - [app, wamr*]
@@ -35,13 +37,17 @@ mappings:
         - [pkg, lua]
         - [pkg, tlsf]
         - [app, msghandler]
+        - [app, msghandler.str*]
         - [app, lua*]
         # femto-container
         - [pkg, femto-container]
+        - [app, _stack]
+        - [app, external, ctx]
         # micro-bpf
         - [unspecified, .Lanon*]
         - [unspecified, rel.ro*]
         - [unspecified, core*]
+        - [unspecified, <core*]
         - [unspecified, rbpf*]
         - [unspecified, <rbpf*]
         - [unspecified, alloc*]
@@ -50,15 +56,18 @@ mappings:
         - [unspecified, gcc_except_table*]
         - [alloc]
         - [compiler-builtins]
+        # native
+        - [app, main.str*]
+        - [app, eh_frame]
+        - [unspecified, eh_frame_hdr]
+        - [app, benchmarks]
+        - [app, main.str1.1]
+ 
 
     - category: Application
       prefixes:
         # jerryscript
         - [app, benchmark_js]
-        # native
-        - [app, benchmarks]
-        - [app, main.str1.1]
-        - [app, startup.main]
         # wamr
         - [app, main_wasm]
         - [app, benchmark_wasm]
@@ -69,6 +78,7 @@ mappings:
         - [app, main.o, benchmark_lua]
         # femto-container
         - [app, benchmark_bin]
+        # micro-bpf
     
 
     - category: Kernel
@@ -79,6 +89,7 @@ mappings:
         - [cpu]
         - [drivers]
         - [boards]
+        - [app, startup.main]
 
     - category: Debug
       prefixes: 
