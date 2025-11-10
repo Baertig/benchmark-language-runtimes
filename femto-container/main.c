@@ -125,7 +125,7 @@ uint32_t load_program_start_us;
 uint32_t execution_start_us;
 
 /* Pre-allocated stack for the virtual machine */
-static uint8_t _stack[20 * 1024] = { 0 };
+static uint8_t _stack[512] = { 0 };
 
 static void fc_print_status(int code)
 {

@@ -23,9 +23,9 @@ BLOBS += benchmark.bin
 export SCALE_FACTOR ?= 1
 
 ifeq ($(BENCHMARK), crc_32)
-    BENCHMARK_ID = 1
+	BENCHMARK_ID = 1
 else ifeq ($(BENCHMARK), libud)
-    BENCHMARK_ID = 2
+	BENCHMARK_ID = 2
 else ifeq ($(BENCHMARK), xgboost)
 	BENCHMARK_ID = 3
 else 
