@@ -1,0 +1,27 @@
+benchmarks:
+  - name: sum
+    filename: sum 
+    scale_factor: 10000
+    iterations: 5
+    boards:
+    - board_name: adafruit-feather-nrf52840-sense 
+      supported_environments:
+        - name: jerryscript
+          env:
+            HEAP: 8 #kb
+            PROFILE: es5.1
+
+        - name: lua
+          env:
+            HEAP: 16000 
+
+        - name: micropython
+          env:
+            HEAP: 25000
+
+        - name: native
+        - name: wamr
+
+        - name: femto-container
+
+        - name: micro-bpf

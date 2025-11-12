@@ -28,6 +28,8 @@ else ifeq ($(BENCHMARK), libud)
 	BENCHMARK_ID = 2
 else ifeq ($(BENCHMARK), xgboost)
 	BENCHMARK_ID = 3
+else ifeq ($(BENCHMARK), sum)
+	BENCHMARK_ID = 4
 else 
 	$(error "Unsupported BENCHMARK: $(BENCHMARK)")
 endif

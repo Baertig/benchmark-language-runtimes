@@ -54,6 +54,12 @@ COMPILE_FLAGS := -Wall \
 %.show: %.wasm
 	wasm2wat $<
 
+sum.wat: sum_template.wat
+	sed 's/{{SCALE_FACTOR}}/$(SCALE_FACTOR)/g' $< > $@
+
+sum.wasm: sum.wat
+	wat2wasm sum.wat -o sum.wasm
+
 %.wasm: %.o Makefile
 	$(CLANG) --target=$(TARGET) -nostdlib \
 		-o $@ \
@@ -73,5 +79,12 @@ COMPILE_FLAGS := -Wall \
 
 .PHONY: .FORCE
 
+ifeq ($(BENCHMARK),sum.c)
+# For .wat benchmarks (e.g., sum): build sum.wasm directly
+benchmark.wasm: sum.wasm
+	cp sum.wasm benchmark.wasm  # Copy to expected output name if needed
+else
+# For .c benchmarks: compile and link as before
 benchmark.wasm: COMPILE_FLAGS += -include $(BENCHMARK)
 benchmark.wasm: $(BENCHMARK) benchmark.c .FORCE
+endif

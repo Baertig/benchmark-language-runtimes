@@ -22,4 +22,6 @@ measure-application-code-size:
 bench-heap-config:
 	pipenv run ./scripts/benchmark.py --config scripts/heap_benchmark_config.yml --board adafruit-feather-nrf52840-sense --write-csv $(RUNTIME_DIR)/bench-heap-feather.csv --port /dev/ttyACM1
 
+micro-benchmark:
+	pipenv run ./scripts/benchmark.py --config ./scripts/micro-benchmarks-config.yml --board adafruit-feather-nrf52840-sense --write-csv $(RUNTIME_DIR)/micro-bench-feather.csv --port /dev/ttyACM0
 

@@ -30,6 +30,7 @@
 #define crc_32 1
 #define libud 2
 #define xgboost 3
+#define sum 4
 
 #ifndef BENCHMARK_ID
 #error "BENCHMARK_ID macro must be defined"
@@ -113,6 +114,11 @@ static context ctx = {
 
 #elif (BENCHMARK_ID == xgboost)
 #include "external/xgboost.h"
+#elif (BENCHMARK_ID == sum)
+typedef struct {
+    int initial;
+} context;
+context ctx = { .initial = 0 };
 #endif
 
 #ifndef BENCH_ITERATIONS
