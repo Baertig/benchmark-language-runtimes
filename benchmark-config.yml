@@ -27,6 +27,11 @@ benchmarks:
           env: 
             HEAP: 16384 # 16 * 1024
             STACK: 8192 # 8 * 1024
+
+        - name: wamr
+          label: wamr-fast
+          env:
+            INTERPRETER: FAST
         - name: femto-container
           disabled: true # tarfind does dynamic memory allocations 
 
@@ -57,6 +62,11 @@ benchmarks:
           env: 
             HEAP: 16384 # 16 * 1024
             STACK: 8192 # 8 * 1024
+
+        - name: wamr
+          label: wamr-fast
+          env:
+            INTERPRETER: FAST
     # - board_name: esp32-wroom-32
     #   supported_environments:
     #     - name: jerryscript
@@ -89,6 +99,11 @@ benchmarks:
         - name: wamr
           env:
             HEAP: 0
+
+        - name: wamr
+          label: wamr-fast
+          env:
+            INTERPRETER: FAST
         - name: femto-container
         - name: micro-bpf
 
@@ -111,6 +126,11 @@ benchmarks:
         - name: wamr
           env:
             HEAP: 0
+
+        - name: wamr
+          label: wamr-fast
+          env:
+            INTERPRETER: FAST
         - name: femto-container
         - name: micro-bpf
 
@@ -146,6 +166,10 @@ benchmarks:
 
         - name: native
         - name: wamr
+        - name: wamr
+          label: wamr-fast
+          env:
+            INTERPRETER: FAST
         - name: femto-container
           disabled: true # md5 uses calloc -> dynamic memory allocations
         - name: micro-bpf
@@ -166,6 +190,11 @@ benchmarks:
 
         - name: native
         - name: wamr
+
+        - name: wamr
+          label: wamr-fast
+          env:
+            INTERPRETER: FAST
     # - board_name: esp32-wroom-32
     #   supported_environments:
     #     - name: jerryscript
@@ -198,6 +227,11 @@ benchmarks:
         - name: wamr
           env: 
             HEAP: 0
+        - name: wamr
+          label: wamr-fast
+          env:
+            INTERPRETER: FAST
+
         - name: femto-container
         - name: micro-bpf
 
@@ -220,6 +254,12 @@ benchmarks:
         - name: wamr
           env: 
             HEAP: 0
+
+        - name: wamr
+          label: wamr-fast
+          env:
+            INTERPRETER: FAST
+
         - name: femto-container
         - name: micro-bpf
 
@@ -255,6 +295,11 @@ benchmarks:
         - name: wamr
           env:
             HEAP: 0
+
+        - name: wamr
+          label: wamr-fast
+          env:
+            INTERPRETER: FAST
         - name: femto-container
         - name: micro-bpf
 
@@ -276,6 +321,12 @@ benchmarks:
         - name: wamr
           env:
             HEAP: 0
+
+        - name: wamr
+          label: wamr-fast
+          env:
+            INTERPRETER: FAST
+
         - name: femto-container
         - name: micro-bpf
 

@@ -300,9 +300,9 @@ def analyze_elf_sizes(elf_path):
 
 def process_combination(console, bench_name, filename, board_name, env_entry, mappings):
     env_name = env_entry["name"]
+    label = env_entry.get("label", env_name)
     env_vars = env_entry.get("env", {})
-    console.print(
-        f"\nProcessing {bench_name} on {board_name} with {env_name}...")
+    console.print(f"\nProcessing {bench_name} on {board_name} with {label}...")
 
     env_dir = env_name
     if not os.path.isdir(env_dir):
@@ -341,7 +341,7 @@ def process_combination(console, bench_name, filename, board_name, env_entry, ma
             {
                 "benchmark": bench_name,
                 "board": board_name,
-                "environment": env_name,
+                "environment": label,
                 "category": cat,
                 "type": stype.section,
                 "size": size,
