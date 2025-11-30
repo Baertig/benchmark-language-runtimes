@@ -13,10 +13,6 @@ def ludcmp(n: int) -> int:
 
     y = [0] * 100
 
-    # --- LU Decomposition ---
-    # This part decomposes the matrix 'a' into Lower (L) and Upper (U)
-    # triangular matrices, stored in-place in 'a'.
-
     for i in range(n):
         for j in range(i + 1, n + 1):
             w = a[j][i]
@@ -32,7 +28,6 @@ def ludcmp(n: int) -> int:
                 w -= a[i + 1][k] * a[k][j]
             a[i + 1][j] = w
 
-    # --- Forward Substitution (solves L*y = b) ---
     y[0] = b[0]
     for i in range(1, n + 1):
         w = b[i]
@@ -40,7 +35,6 @@ def ludcmp(n: int) -> int:
             w -= a[i][j] * y[j]
         y[i] = w
 
-    # --- Backward Substitution (solves U*x = y) ---
     x[n] = y[n] // a[n][n]
     for i in range(n - 1, -1, -1):
         w = y[i]
@@ -55,9 +49,6 @@ def verify_benchmark(res: int) -> bool:
     global x
     x_ref = [0, 0, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-    # In Python, lists can be compared directly with '=='.
-    # This checks if every element in 'x' matches the corresponding
-    # element in 'x_ref' and that the result from ludcmp was 0.
     return x == x_ref and res == 0
 
 
@@ -72,7 +63,6 @@ def benchmark() -> bool:
             w = 0
             for j in range(n + 1):
                 a[i][j] = (i + 1) + (j + 1)
-                # Double the value on the main diagonal
                 if i == j:
                     a[i][j] *= 2
                 w += a[i][j]
