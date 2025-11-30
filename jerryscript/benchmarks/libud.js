@@ -1,13 +1,13 @@
 var a = [];
-var b = new Array(20);
-var x = new Array(20);
+var b = [];
+var x = [];
 
 var chkerr;
 
 var SCALE_FACTOR = 1;
 
 for (var i = 0; i < 20; i++) {
-  a[i] = new Array(20);
+  a[i] = [];
   for (var j = 0; j < 20; j++) {
     a[i][j] = 0;
   }
@@ -18,7 +18,7 @@ for (var i = 0; i < 20; i++) {
 function ludcmp(n) {
   var i, j, k;
   var w;
-  var y = new Array(100);
+  var y = [];
 
   for (i = 0; i < n; i++) {
     for (j = i + 1; j <= n; j++) {

@@ -46,13 +46,13 @@ var crc_32_tab = new Uint32Array([
   0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d,
 ]);
 
-var seed = 0n;
+var seed = 0;
 
 function rand_beebs() {
   //   seed = (seed * 1103515245 + 12345) & ((1<<31)-1) in 32-bit arithmetic
-  seed *= 1103515245n;
-  seed += 12345n;
-  seed &= 0x7fffffffn;
+  seed = Math.imul(seed, 1103515245);
+  seed += 12345;
+  seed &= 0x7fffffff;
   return Number(seed) >>> 16;
 }
 
@@ -74,7 +74,7 @@ function benchmark() {
   var r = 0;
 
   for (var g = 0; g < sf; g++) {
-    seed = 0n;
+    seed = 0;
     r = crc32pseudo();
   }
 

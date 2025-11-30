@@ -208,7 +208,7 @@ var Y_test = [7,2,1,0,4,1,4,9,5,9,0,6,9,0,1,5,9,7,3,4,9,6,6,5,4,0,7,4,0,1,3,1];
 /* prettier-ignore-end */
 
 function predict(x) {
-  var votes = new Array(NUM_CLASSES);
+  var votes = [];
   for (var voteIdx = 0; voteIdx < NUM_CLASSES; voteIdx++) {
     votes[voteIdx] = 0;
   }

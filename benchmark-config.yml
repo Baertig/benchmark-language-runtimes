@@ -135,6 +135,8 @@ benchmarks:
         - name: jerryscript
           env:
             HEAP: 20 #kb
+            PROFILE: es5.1
+
         - name: lua
           env:
             HEAP: 95000
@@ -154,6 +156,7 @@ benchmarks:
         - name: jerryscript
           env:
             HEAP: 20 #kb
+            PROFILE: es5.1
         - name: lua
           env:
             HEAP: 95000
@@ -181,7 +184,7 @@ benchmarks:
         - name: jerryscript
           env:
             HEAP: 50 #kb
-            PROFILE: es5.1
+            PROFILE: minimal
 
         - name: lua
           env:
@@ -203,7 +206,7 @@ benchmarks:
         - name: jerryscript
           env:
             HEAP: 60 #kb
-            PROFILE: es5.1
+            PROFILE: minimal
 
         - name: lua
           env:
@@ -240,7 +243,7 @@ benchmarks:
         - name: jerryscript
           env:
             HEAP: 7 #kb
-            PROFILE: es5.1
+            PROFILE: minimal
         - name: lua
           env:
             HEAP: 35000
@@ -260,7 +263,8 @@ benchmarks:
         - name: jerryscript
           env:
             HEAP: 7 #kb
-            PROFILE: es5.1
+            PROFILE: minimal
+
         - name: lua
           env:
             HEAP: 35000
