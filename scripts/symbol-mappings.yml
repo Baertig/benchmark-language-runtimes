@@ -56,12 +56,6 @@ mappings:
         - [unspecified, gcc_except_table*]
         - [alloc]
         - [compiler-builtins]
-        # native
-        - [app, main.str*]
-        - [app, eh_frame]
-        - [unspecified, eh_frame_hdr]
-        - [app, benchmarks]
-        - [app, main.str1.1]
  
 
     - category: Application
@@ -90,6 +84,12 @@ mappings:
         - [drivers]
         - [boards]
         - [app, startup.main]
+        # native
+        - [app, main.str*]
+        - [app, eh_frame]
+        - [unspecified, eh_frame_hdr]
+        - [app, benchmarks]
+        - [app, main.str1.1]
 
     - category: Debug
       prefixes: 
