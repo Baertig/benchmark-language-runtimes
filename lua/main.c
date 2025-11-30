@@ -81,9 +81,15 @@ int lua_run_script(const uint8_t *buffer, size_t buffer_len)
     #endif
 
     lua_riot_openlibs(L, LUAR_LOAD_BASE);
+#ifdef LOAD_MATH
     lua_riot_openlibs(L, LUAR_LOAD_MATH);
+#endif
+#ifdef LOAD_STRING
     lua_riot_openlibs(L, LUAR_LOAD_STRING);
+#endif
+#ifdef LOAD_TABLE
     lua_riot_openlibs(L, LUAR_LOAD_TABLE);
+#endif
 
     uint32_t init_runtime_end = ztimer_now(ZTIMER_USEC);
     printf("%d;", (int) init_runtime_end - (int) init_runtime_begin);
@@ -181,6 +187,7 @@ int main(void)
     ztimer_sleep(ZTIMER_USEC, 3000000);
 
     for (int i=0; i < BENCH_ITERATIONS; i++) {
+        ztimer_sleep(ZTIMER_USEC, 500000);
         printf("%d;", i);
         lua_run_script(benchmark_lua, benchmark_lua_len);
     }

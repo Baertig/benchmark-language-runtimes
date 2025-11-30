@@ -32,6 +32,9 @@ SCALE_FACTOR ?= 1
 MEM_STATS ?= OFF
 GC_AGGRESSIVE ?= OFF
 DUMP_OPCODES ?= OFF
+MATH ?= OFF
+STRING ?= OFF
+TABLE ?= OFF
 
 CFLAGS += -DBENCH_ITERATIONS=$(ITERATIONS)
 HEAP ?= 204800
@@ -48,6 +51,18 @@ endif
 
 ifeq ($(GC_AGGRESSIVE), ON)
   CFLAGS += -DGC_AGGRESSIVE
+endif
+
+ifeq ($(MATH), ON)
+  CFLAGS += -DLOAD_MATH
+endif
+
+ifeq ($(STRING), ON)
+  CFLAGS += -DLOAD_STRING
+endif
+
+ifeq ($(TABLE), ON)
+  CFLAGS += -DLOAD_TABLE
 endif
 
 all: benchmark.lua

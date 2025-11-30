@@ -53,7 +53,7 @@ local function md5(initialMsg, initialLen)
 	h2 = 0x98badcfe
 	h3 = 0x10325476
 
-	local newLen = (((math.floor((len + 8) / 64) + 1) * 64) - 8)
+	local newLen = ((((len + 8) // 64) + 1) * 64) - 8
 	local msg = allocateZeroed(newLen + 64)
 
 	for i = 0, len - 1 do

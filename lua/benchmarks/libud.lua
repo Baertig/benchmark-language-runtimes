@@ -19,7 +19,7 @@ local function ludcmp(N)
                     w = w - a[j][k] * a[k][i]
                 end
             end
-            a[j][i] = math.floor(w / a[i][i])
+            a[j][i] = w // a[i][i]
         end
 
         for j = i + 1, N do
@@ -40,13 +40,13 @@ local function ludcmp(N)
         y[i] = w
     end
 
-    x[N] = math.floor(y[N] / a[N][N])
+    x[N] = y[N] // a[N][N]
     for i = N - 1, 1, -1 do
         w = y[i]
         for j = i + 1, N do
             w = w - a[i][j] * x[j]
         end
-        x[i] = math.floor(w / a[i][i])
+        x[i] = w // a[i][i]
     end
 
     return 0
